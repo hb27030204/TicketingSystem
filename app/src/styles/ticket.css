@@ -1,0 +1,392 @@
+/* Ported from Old Code/Index.html's .ticket design (movie-ticket-style
+   perforated card, front + back, per-type theming). QR is a stored
+   server-generated image now, not a client-rendered canvas - everything
+   else follows the original layout/proportions. */
+
+.ticket-pair {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ticket {
+  --ticket-accent: #8d1029;
+  --ticket-gold: #f6dc95;
+  position: relative;
+  width: 330px;
+  height: 690px;
+  border-radius: 24px;
+  overflow: hidden;
+  color: #fff;
+  box-shadow: 0 24px 65px rgba(0, 0, 0, 0.48);
+  isolation: isolate;
+  font-family: "DM Sans", system-ui, sans-serif;
+  flex-shrink: 0;
+}
+
+.ticket::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 214, 120, 0.75);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.ticket::after {
+  content: "";
+  position: absolute;
+  inset: 15px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 170, 90, 0.25);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.ticket-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ticket-hole {
+  position: absolute;
+  top: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0b0709;
+  z-index: 7;
+}
+.ticket-hole.left {
+  left: 18px;
+}
+.ticket-hole.right {
+  right: 18px;
+}
+
+.ticket-notch {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #0b0709;
+  z-index: 8;
+}
+.ticket-notch.left {
+  left: -12px;
+}
+.ticket-notch.right {
+  right: -12px;
+}
+
+/* Theme variants */
+.ticket.garba {
+  --ticket-accent: #8d1029;
+  --ticket-gold: #ffd978;
+  background: linear-gradient(160deg, #3b0611, #8d1029 48%, #5d081b);
+}
+.ticket.dj {
+  --ticket-accent: #4d1aa8;
+  --ticket-gold: #f2d6ff;
+  background: linear-gradient(160deg, #09092c, #241064 48%, #5411a4);
+}
+.ticket.kids {
+  --ticket-accent: #087247;
+  --ticket-gold: #f7d85a;
+  background: linear-gradient(160deg, #063b29, #087247 48%, #0a4f35);
+}
+
+.ticket.back.garba {
+  background: linear-gradient(160deg, #430714, #8d1029 48%, #5d081b);
+}
+.ticket.back.dj {
+  background: linear-gradient(160deg, #0c0c33, #241064 48%, #4d1aa8);
+}
+.ticket.back.kids {
+  background: linear-gradient(160deg, #052f20, #087247 48%, #0a4f35);
+}
+
+/* Front */
+.ticket-top {
+  position: relative;
+  z-index: 2;
+  padding: 30px 30px 0;
+  text-align: center;
+}
+
+.ticket-logo {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ticket-gold);
+  font-weight: 600;
+}
+
+.ticket-ornament {
+  margin-top: 8px;
+  color: var(--ticket-gold);
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+.ticket-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 46px;
+  line-height: 0.9;
+  letter-spacing: -1px;
+  margin: 6px 0 0;
+  color: #fff;
+}
+
+.ticket-script {
+  font-family: cursive;
+  color: var(--ticket-gold);
+  font-size: 27px;
+  margin-top: 4px;
+}
+
+.ticket-event-date {
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 19px;
+}
+.ticket-event-date small {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.ticket-art-visual {
+  position: relative;
+  z-index: 2;
+  margin: 16px 20px 0;
+  height: 130px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.22), transparent 60%),
+    radial-gradient(circle at 75% 70%, var(--ticket-accent), transparent 70%);
+}
+
+.ticket-info-panel {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  min-height: 330px;
+  border-radius: 18px;
+  background: #f8f1e7;
+  color: #171216;
+  z-index: 3;
+  padding: 18px 20px 16px;
+}
+
+.ticket-info-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admit-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--ticket-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.ticket-booking {
+  text-align: right;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7a7178;
+}
+.ticket-booking b {
+  display: block;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  color: #171216;
+  letter-spacing: 0;
+}
+
+.ticket-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  margin-top: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed #d8cdbc;
+}
+
+.ticket-field small {
+  display: block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #948a80;
+}
+.ticket-field b {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: #171216;
+}
+
+.ticket-qr-block {
+  display: grid;
+  grid-template-columns: 1fr 108px;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.ticket-qr-copy {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #7a7178;
+  line-height: 1.5;
+}
+.ticket-qr-copy strong {
+  display: block;
+  color: #171216;
+  font-size: 12px;
+}
+
+.qr {
+  width: 108px;
+  height: 108px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ticket-private {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 9px;
+  color: #a89d90;
+}
+
+/* Back */
+.back-inner {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 48px 30px 24px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.back-logo {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ticket-gold);
+  font-weight: 600;
+}
+
+.back-script {
+  font-family: cursive;
+  font-size: 26px;
+  color: var(--ticket-gold);
+  margin-top: 14px;
+  line-height: 1.2;
+}
+
+.back-tag {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.back-divider {
+  height: 1px;
+  margin: 18px 0;
+  background: linear-gradient(90deg, transparent, var(--ticket-gold), transparent);
+  opacity: 0.5;
+}
+
+.back-heading {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--ticket-gold);
+  margin-bottom: 8px;
+}
+
+.back-line {
+  font-size: 13px;
+  line-height: 1.8;
+  opacity: 0.92;
+}
+
+.venue-art {
+  width: 90px;
+  height: 90px;
+  margin: 14px auto 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ticket-accent), transparent 75%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+}
+
+.venue-name {
+  font-family: "Playfair Display", Georgia, serif;
+  color: var(--ticket-gold);
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+.venue-address {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.back-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.7;
+  line-height: 1.6;
+}
+
+@media (max-width: 1024px) {
+  .ticket-pair {
+    flex-direction: column;
+    align-items: center;
+  }
+}

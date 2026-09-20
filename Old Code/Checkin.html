@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Raz Dandya Nights — Ticket Check-in</title>
+
+  <style>
+    :root{
+      --bg:#0b090a;
+      --panel:#151214;
+      --line:#342d30;
+      --gold:#d7ad52;
+      --gold2:#f1d48b;
+      --text:#f7f1e7;
+      --muted:#aaa1a2;
+      --green:#49d287;
+      --red:#ef7279
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 50% 0,#2b1d0b,transparent 42%),
+        var(--bg);
+      color:var(--text);
+      font-family:Arial,sans-serif;
+      min-height:100vh
+    }
+
+    .wrap{
+      width:min(560px,92%);
+      margin:auto;
+      padding:28px 0 50px
+    }
+
+    .brand{
+      font-size:11px;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--gold2);
+      margin-bottom:24px
+    }
+
+    .card{
+      background:rgba(21,18,20,.98);
+      border:1px solid var(--line);
+      padding:24px;
+      border-radius:16px;
+      margin-bottom:16px
+    }
+
+    .hidden{display:none!important}
+
+    h1{
+      font-size:27px;
+      margin:0 0 8px
+    }
+
+    h2{
+      font-size:21px;
+      margin:0 0 5px
+    }
+
+    .sub{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+      margin-bottom:20px
+    }
+
+    label{
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      letter-spacing:1.4px;
+      text-transform:uppercase;
+      margin:0 0 7px
+    }
+
+    input,button{
+      width:100%;
+      font:inherit
+    }
+
+    input{
+      background:#0d0b0c;
+      border:1px solid #40383a;
+      color:var(--text);
+      padding:15px;
+      border-radius:10px;
+      outline:none;
+      margin-bottom:14px
+    }
+
+    button{
+      border:0;
+      border-radius:10px;
+      padding:16px;
+      background:var(--gold);
+      color:#17100a;
+      font-weight:800;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      cursor:pointer
+    }
+
+    button:disabled{
+      opacity:.38;
+      cursor:not-allowed
+    }
+
+    .logout{
+      margin-top:10px;
+      background:#28211b;
+      color:#ead9b8;
+      border:1px solid #493c2b
+    }
+
+    .result{
+      margin-top:16px;
+      padding:18px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      line-height:1.55
+    }
+
+    .ok{
+      background:#102218;
+      border-color:#2f8759
+    }
+
+    .bad{
+      background:#281315;
+      border-color:#8b4047
+    }
+
+    .warn{
+      background:#241e13;
+      border-color:#725c2d
+    }
+
+    .big{
+      font-size:29px;
+      font-weight:900;
+      margin-bottom:7px
+    }
+
+    .name{
+      font-size:20px;
+      font-weight:800;
+      margin:5px 0
+    }
+
+    .meta{
+      color:#d2c7b8;
+      font-size:13px;
+      margin-top:5px
+    }
+
+    .small{
+      color:var(--muted);
+      font-size:11px;
+      margin-top:14px
+    }
+
+    .status{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:12px
+    }
+
+    .ticketTop{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start
+    }
+
+    .pill{
+      display:inline-block;
+      padding:6px 9px;
+      border:1px solid #5b4a2b;
+      border-radius:999px;
+      color:var(--gold2);
+      font-size:10px;
+      letter-spacing:1px;
+      text-transform:uppercase
+    }
+
+    .dates{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:18px
+    }
+
+    .dateBtn{
+      background:#211b18;
+      color:var(--text);
+      border:1px solid #51463b;
+      text-align:left;
+      text-transform:none;
+      letter-spacing:0;
+      padding:15px
+    }
+
+    .dateBtn .dateTitle{
+      font-weight:900;
+      font-size:16px
+    }
+
+    .dateBtn .dateInfo{
+      font-size:12px;
+      color:#cfc3b2;
+      margin-top:7px
+    }
+
+    .dateBtn.selected{
+      border-color:var(--gold);
+      background:#332817
+    }
+
+    .dateBtn.complete{
+      opacity:.35;
+      cursor:not-allowed
+    }
+
+    .dateBtn.closed{
+      opacity:.35;
+      cursor:not-allowed;
+      border-color:#493f3f;
+      background:#171416
+    }
+
+    .qtyBox{
+      margin-top:18px;
+      padding-top:18px;
+      border-top:1px solid var(--line)
+    }
+
+    .qtyRow{
+      display:flex;
+      align-items:center;
+      gap:10px
+    }
+
+    .qtyRow button{
+      width:58px;
+      padding:14px;
+      background:#29221d;
+      color:var(--text);
+      border:1px solid #4a4038
+    }
+
+    .qtyValue{
+      flex:1;
+      text-align:center;
+      font-size:30px;
+      font-weight:900
+    }
+
+    .confirm{
+      margin-top:16px
+    }
+
+    .remaining{
+      font-size:12px;
+      color:var(--gold2);
+      margin-top:7px
+    }
+
+    .unitNote{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:5px
+    }
+
+    @media(max-width:520px){
+      .dates{
+        grid-template-columns:1fr
+      }
+
+      .card{
+        padding:20px
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <div class="brand">
+    Raz Dandya Nights by AK · Secure Entry
+  </div>
+
+  <div class="card" id="loginCard">
+
+    <h1>Staff authorization</h1>
+
+    <div class="sub">
+      Scan the guest QR, authorize yourself, choose the entry date and then select how many guests are entering.
+    </div>
+
+    <label>Staff name</label>
+    <input
+      id="staffName"
+      autocomplete="name"
+      placeholder="Your name"
+    >
+
+    <label>Staff PIN</label>
+    <input
+      id="staffPin"
+      type="password"
+      inputmode="numeric"
+      autocomplete="off"
+      placeholder="Staff PIN"
+    >
+
+    <button id="loginBtn" onclick="login()">
+      Authorize check-in
+    </button>
+
+    <div id="loginStatus" class="status"></div>
+
+  </div>
+
+
+  <div class="card hidden" id="ticketCard">
+
+    <div class="ticketTop">
+
+      <div>
+        <h1>Ticket check-in</h1>
+
+        <div class="sub" style="margin:0">
+          Select the date first. Then select the number of guests entering now.
+        </div>
+      </div>
+
+      <div class="pill" id="staffPill"></div>
+
+    </div>
+
+    <div id="ticketSummary"></div>
+
+    <div id="dateArea"></div>
+
+    <div id="qtyArea"></div>
+
+    <button
+      id="checkBtn"
+      class="confirm hidden"
+      onclick="checkIn()"
+    >
+      Confirm entry
+    </button>
+
+    <button
+      id="logoutBtn"
+      class="logout"
+      onclick="logout()"
+    >
+      Log out
+    </button>
+
+    <div id="checkStatus" class="status"></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let token = '';
+
+let sessionToken =
+  localStorage.getItem('rdn_staff_session') || '';
+
+let staffName =
+  localStorage.getItem('rdn_staff_name') || '';
+
+let eventDate = '';
+
+let ticketData = null;
+
+let selectedQuantity = 1;
+
+
+const DATE_17 = '17th October 2026';
+const DATE_18 = '18th October 2026';
+
+
+function setText(id,text){
+  document.getElementById(id).textContent =
+    text || '';
+}
+
+
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(
+      /[&<>'"]/g,
+      c => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        "'":'&#39;',
+        '"':'&quot;'
+      }[c])
+    );
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+function login(){
+
+  const name =
+    document.getElementById('staffName')
+      .value
+      .trim();
+
+  const pin =
+    document.getElementById('staffPin')
+      .value
+      .trim();
+
+  if(!name || !pin){
+    setText(
+      'loginStatus',
+      'Enter your staff name and PIN.'
+    );
+    return;
+  }
+
+  document.getElementById('loginBtn').disabled = true;
+
+  setText(
+    'loginStatus',
+    'Authorizing…'
+  );
+
+  google.script.run
+
+    .withSuccessHandler(function(r){
+
+      document.getElementById('loginBtn').disabled = false;
+
+      if(!r || !r.success){
+
+        setText(
+          'loginStatus',
+          (r && r.message) ||
+          'Authorization failed.'
+        );
+
+        return;
+      }
+
+      sessionToken = r.sessionToken;
+
+      staffName =
+        r.staffName || name;
+
+      localStorage.setItem(
+        'rdn_staff_session',
+        sessionToken
+      );
+
+      localStorage.setItem(
+        'rdn_staff_name',
+        staffName
+      );
+
+      document
+        .getElementById('loginCard')
+        .classList
+        .add('hidden');
+
+      document
+        .getElementById('ticketCard')
+        .classList
+        .remove('hidden');
+
+      setText(
+        'staffPill',
+        staffName
+      );
+
+      loadTicket();
+
+    })
+
+    .withFailureHandler(function(e){
+
+      document.getElementById('loginBtn').disabled = false;
+
+      setText(
+        'loginStatus',
+        e && e.message
+          ? e.message
+          : 'Authorization failed.'
+      );
+
+    })
+
+    .staffLogin(
+      name,
+      pin
+    );
+}
+
+
+/* =========================================================
+   LOAD TICKET
+   ========================================================= */
+
+function loadTicket(){
+
+  setText(
+    'checkStatus',
+    'Loading ticket details…'
+  );
+
+  google.script.run
+
+    .withSuccessHandler(function(r){
+
+      setText(
+        'checkStatus',
+        ''
+      );
+
+      if(!r || !r.success){
+
+        showError(
+          (r && r.message) ||
+          'Unable to load this ticket.'
+        );
+
+        return;
+      }
+
+      if(r.result === 'NOT_PAID'){
+
+        showError(
+          r.message
+        );
+
+        return;
+      }
+
+      if(
+        r.result !== 'READY' ||
+        !r.ticket
+      ){
+
+        showError(
+          r.message ||
+          'Unable to load ticket.'
+        );
+
+        return;
+      }
+
+      ticketData = r.ticket;
+
+      renderTicket();
+
+    })
+
+    .withFailureHandler(function(e){
+
+      if(isSessionError(e)){
+
+        showLogin();
+
+        return;
+      }
+
+      showError(
+        e && e.message
+          ? e.message
+          : 'Unable to load ticket from server.'
+      );
+
+    })
+
+    .getTicketForCheckIn(
+      sessionToken,
+      token
+    );
+}
+
+
+/* =========================================================
+   RENDER TICKET
+   ========================================================= */
+
+function renderTicket(){
+
+  const t = ticketData;
+
+  document
+    .getElementById('ticketSummary')
+    .innerHTML =
+
+      '<div class="result warn">' +
+
+        '<div class="name">' +
+          esc(t.name) +
+        '</div>' +
+
+        '<div class="meta">' +
+          esc(t.ticketType) +
+        '</div>' +
+
+        '<div class="meta">' +
+          'Total guests: <b>' +
+          esc(t.totalGuests) +
+          '</b>' +
+        '</div>' +
+
+        '<div class="meta">' +
+          'Band: ' +
+          esc(t.bandColour) +
+        '</div>' +
+
+        (
+          t.unitSize > 1
+          ?
+          '<div class="unitNote">' +
+            'Each purchased package represents ' +
+            esc(t.unitSize) +
+            ' guests.' +
+          '</div>'
+          :
+          ''
+        ) +
+
+      '</div>';
+
+
+  const d17 = t.days.date17;
+  const d18 = t.days.date18;
+
+  const onlyDate = !t.isTwoDay;
+
+
+  /*
+   * IMPORTANT:
+   *
+   * The server returns enabled17/enabled18.
+   * These MUST control the UI.
+   */
+
+  const enabled17 =
+    t.days.enabled17 === true;
+
+  const enabled18 =
+    t.days.enabled18 === true;
+
+
+  let html =
+    '<div class="dates">';
+
+
+  html += dateButton(
+    d17,
+    t.days.checked17,
+    t.days.remaining17,
+    t.days.complete17,
+    enabled17 &&
+      (!onlyDate || t.purchasedDate === d17)
+  );
+
+
+  html += dateButton(
+    d18,
+    t.days.checked18,
+    t.days.remaining18,
+    t.days.complete18,
+    enabled18 &&
+      (!onlyDate || t.purchasedDate === d18)
+  );
+
+
+  html +=
+    '</div>';
+
+
+  document
+    .getElementById('dateArea')
+    .innerHTML = html;
+
+
+  document
+    .getElementById('qtyArea')
+    .innerHTML = '';
+
+
+  document
+    .getElementById('checkBtn')
+    .classList
+    .add('hidden');
+
+
+  /*
+   * One-day ticket:
+   *
+   * Only auto-select its purchased date if
+   * that date is currently OPEN.
+   */
+
+  if(onlyDate){
+
+    const purchasedEnabled =
+      t.purchasedDate === DATE_17
+        ? enabled17
+        : enabled18;
+
+    if(purchasedEnabled){
+
+      chooseDate(
+        t.purchasedDate
+      );
+
+    }else{
+
+      showClosedDateMessage(
+        t.purchasedDate
+      );
+
+    }
+  }
+}
+
+
+/* =========================================================
+   DATE BUTTON
+   ========================================================= */
+
+function dateButton(
+  date,
+  checked,
+  remaining,
+  complete,
+  allowed
+){
+
+  const isEnabled =
+    date === DATE_17
+      ? ticketData.days.enabled17 === true
+      : ticketData.days.enabled18 === true;
+
+
+  const disabled =
+    !allowed ||
+    complete ||
+    !isEnabled;
+
+
+  let cls =
+    'dateBtn';
+
+
+  if(complete){
+    cls += ' complete';
+  }
+
+
+  if(!isEnabled){
+    cls += ' closed';
+  }
+
+
+  if(eventDate === date){
+    cls += ' selected';
+  }
+
+
+  let label;
+
+
+  if(complete){
+
+    label =
+      'FULLY CHECKED IN';
+
+  }else if(!isEnabled){
+
+    label =
+      'CHECK-IN CLOSED';
+
+  }else if(allowed){
+
+    label =
+      remaining + ' remaining';
+
+  }else{
+
+    label =
+      'NOT VALID';
+  }
+
+
+  return (
+
+    '<button ' +
+      'type="button" ' +
+      'class="' + cls + '" ' +
+      (disabled ? 'disabled ' : '') +
+      'onclick="chooseDate(\'' +
+        date +
+      '\')">' +
+
+      '<div class="dateTitle">' +
+        esc(
+          date.replace(
+            'th October 2026',
+            ' October'
+          )
+        ) +
+      '</div>' +
+
+      '<div class="dateInfo">' +
+        esc(checked) +
+        ' checked in · ' +
+        esc(label) +
+      '</div>' +
+
+    '</button>'
+  );
+}
+
+
+/* =========================================================
+   CHOOSE DATE
+   ========================================================= */
+
+function chooseDate(date){
+
+  if(!ticketData){
+    return;
+  }
+
+
+  const is17 =
+    date === DATE_17;
+
+
+  const enabled =
+    is17
+      ? ticketData.days.enabled17 === true
+      : ticketData.days.enabled18 === true;
+
+
+  /*
+   * HARD UI BLOCK:
+   *
+   * Never allow a CLOSED date to become selected.
+   */
+
+  if(!enabled){
+
+    showClosedDateMessage(
+      date
+    );
+
+    return;
+  }
+
+
+  const remaining =
+    is17
+      ? ticketData.days.remaining17
+      : ticketData.days.remaining18;
+
+
+  const complete =
+    is17
+      ? ticketData.days.complete17
+      : ticketData.days.complete18;
+
+
+  const allowed =
+    ticketData.isTwoDay ||
+    ticketData.purchasedDate === date;
+
+
+  if(
+    !allowed ||
+    complete ||
+    remaining < 1
+  ){
+
+    return;
+  }
+
+
+  eventDate = date;
+
+  selectedQuantity = 1;
+
+  renderDateSelection();
+}
+
+
+/* =========================================================
+   CLOSED DATE MESSAGE
+   ========================================================= */
+
+function showClosedDateMessage(date){
+
+  eventDate = '';
+
+  selectedQuantity = 1;
+
+  document
+    .getElementById('qtyArea')
+    .innerHTML = '';
+
+
+  document
+    .getElementById('checkBtn')
+    .classList
+    .add('hidden');
+
+
+  setText(
+    'checkStatus',
+    'Check-in is currently closed for ' +
+      date +
+      '. Please wait until check-in is opened.'
+  );
+}
+
+
+/* =========================================================
+   DATE SELECTION
+   ========================================================= */
+
+function renderDateSelection(){
+
+  const t = ticketData;
+
+
+  const r =
+    eventDate === DATE_17
+      ? t.days.remaining17
+      : t.days.remaining18;
+
+
+  const c =
+    eventDate === DATE_17
+      ? t.days.checked17
+      : t.days.checked18;
+
+
+  /*
+   * Extra safety:
+   *
+   * If the server state changed while the page
+   * was open, don't display the check-in controls.
+   */
+
+  const enabled =
+    eventDate === DATE_17
+      ? t.days.enabled17 === true
+      : t.days.enabled18 === true;
+
+
+  if(!enabled){
+
+    showClosedDateMessage(
+      eventDate
+    );
+
+    return;
+  }
+
+
+  document
+    .querySelectorAll('.dateBtn')
+    .forEach(function(b){
+
+      b.classList.remove(
+        'selected'
+      );
+
+    });
+
+
+  const buttons =
+    document.querySelectorAll(
+      '.dateBtn'
+    );
+
+
+  if(buttons.length === 2){
+
+    buttons[
+      eventDate === DATE_17
+        ? 0
+        : 1
+    ].classList.add(
+      'selected'
+    );
+  }
+
+
+  if(r < 1){
+
+    document
+      .getElementById('qtyArea')
+      .innerHTML = '';
+
+    document
+      .getElementById('checkBtn')
+      .classList
+      .add('hidden');
+
+    return;
+  }
+
+
+  const unitLabel =
+    t.unitSize > 1
+      ? 'guests'
+      : 'guest(s)';
+
+
+  document
+    .getElementById('qtyArea')
+    .innerHTML =
+
+      '<div class="qtyBox">' +
+
+        '<h2>How many entering now?</h2>' +
+
+        '<div class="remaining">' +
+          esc(c) +
+          ' already checked in · ' +
+          esc(r) +
+          ' remaining' +
+        '</div>' +
+
+        '<div class="qtyRow" style="margin-top:12px">' +
+
+          '<button ' +
+            'type="button" ' +
+            'onclick="changeQty(-1)">' +
+            '−' +
+          '</button>' +
+
+          '<div ' +
+            'class="qtyValue" ' +
+            'id="qtyValue">' +
+            '1' +
+          '</div>' +
+
+          '<button ' +
+            'type="button" ' +
+            'onclick="changeQty(1)">' +
+            '+' +
+          '</button>' +
+
+        '</div>' +
+
+        '<div class="unitNote">' +
+          'Select between 1 and ' +
+          esc(r) +
+          ' ' +
+          unitLabel +
+          '.' +
+        '</div>' +
+
+      '</div>';
+
+
+  document
+    .getElementById('checkBtn')
+    .classList
+    .remove('hidden');
+
+
+  updateQty();
+}
+
+
+/* =========================================================
+   QUANTITY
+   ========================================================= */
+
+function changeQty(delta){
+
+  if(
+    !ticketData ||
+    !eventDate
+  ){
+
+    return;
+  }
+
+
+  /*
+   * Do not allow quantity controls while
+   * the selected date is closed.
+   */
+
+  const enabled =
+    eventDate === DATE_17
+      ? ticketData.days.enabled17 === true
+      : ticketData.days.enabled18 === true;
+
+
+  if(!enabled){
+
+    showClosedDateMessage(
+      eventDate
+    );
+
+    return;
+  }
+
+
+  const max =
+    eventDate === DATE_17
+      ? ticketData.days.remaining17
+      : ticketData.days.remaining18;
+
+
+  selectedQuantity =
+    Math.max(
+      1,
+      Math.min(
+        max,
+        selectedQuantity + delta
+      )
+    );
+
+
+  updateQty();
+}
+
+
+function updateQty(){
+
+  const el =
+    document.getElementById(
+      'qtyValue'
+    );
+
+  if(el){
+
+    el.textContent =
+      selectedQuantity;
+  }
+}
+
+
+/* =========================================================
+   CHECK IN
+   ========================================================= */
+
+function checkIn(){
+
+  if(!sessionToken){
+
+    showLogin();
+
+    return;
+  }
+
+
+  if(!eventDate){
+
+    setText(
+      'checkStatus',
+      'Please select an entry date.'
+    );
+
+    return;
+  }
+
+
+  /*
+   * Client-side closed-date protection.
+   *
+   * Server-side protection remains authoritative.
+   */
+
+  const enabled =
+    eventDate === DATE_17
+      ? ticketData &&
+        ticketData.days.enabled17 === true
+      : ticketData &&
+        ticketData.days.enabled18 === true;
+
+
+  if(!enabled){
+
+    showClosedDateMessage(
+      eventDate
+    );
+
+    return;
+  }
+
+
+  if(
+    !selectedQuantity ||
+    selectedQuantity < 1
+  ){
+
+    setText(
+      'checkStatus',
+      'Please select the number of guests.'
+    );
+
+    return;
+  }
+
+
+  const btn =
+    document.getElementById(
+      'checkBtn'
+    );
+
+
+  btn.disabled = true;
+
+
+  setText(
+    'checkStatus',
+    'Confirming entry…'
+  );
+
+
+  google.script.run
+
+    .withSuccessHandler(function(r){
+
+      btn.disabled = false;
+
+
+      if(!r){
+
+        showError(
+          'The server did not return a response.'
+        );
+
+        return;
+      }
+
+
+      /*
+       * IMPORTANT:
+       *
+       * This is the final response from the
+       * server. CHECKIN_CLOSED means NO SHEET
+       * UPDATE happened.
+       */
+
+      if(
+        r.result === 'CHECKIN_CLOSED'
+      ){
+
+        /*
+         * Refresh ticket state so the UI
+         * immediately reflects CLOSED.
+         */
+
+        loadTicket();
+
+        setText(
+          'checkStatus',
+          r.message ||
+          'Check-in is currently closed for this date.'
+        );
+
+        return;
+      }
+
+
+      if(
+        r.result === 'VALID'
+      ){
+
+        showSuccess(r);
+
+        return;
+      }
+
+
+      if(
+        r.result === 'TOO_MANY'
+      ){
+
+        setText(
+          'checkStatus',
+          r.message ||
+          'Not enough guests remaining.'
+        );
+
+        loadTicket();
+
+        return;
+      }
+
+
+      if(
+        r.result === 'ALREADY_USED'
+      ){
+
+        loadTicket();
+
+        setText(
+          'checkStatus',
+          r.message ||
+          'All guests are already checked in for this date.'
+        );
+
+        return;
+      }
+
+
+      if(
+        r.result === 'WRONG_DATE' ||
+        r.result === 'NOT_PAID' ||
+        r.result === 'INVALID'
+      ){
+
+        showError(
+          r.message ||
+          'Ticket cannot be checked in.'
+        );
+
+        return;
+      }
+
+
+      showError(
+        r.message ||
+        'Check-in failed.'
+      );
+
+    })
+
+    .withFailureHandler(function(e){
+
+      btn.disabled = false;
+
+
+      if(isSessionError(e)){
+
+        localStorage.removeItem(
+          'rdn_staff_session'
+        );
+
+        sessionToken = '';
+
+        showLogin();
+
+        return;
+      }
+
+
+      showError(
+        e && e.message
+          ? e.message
+          : 'Check-in failed.'
+      );
+
+    })
+
+    .validateAndCheckInTicket(
+      sessionToken,
+      token,
+      eventDate,
+      selectedQuantity
+    );
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+function showSuccess(r){
+
+  const remaining =
+    Number(r.remaining) || 0;
+
+
+  const total =
+    Number(
+      r.ticket &&
+      r.ticket.totalGuests
+    ) || 0;
+
+
+  document
+    .getElementById('dateArea')
+    .innerHTML = '';
+
+
+  document
+    .getElementById('qtyArea')
+    .innerHTML = '';
+
+
+  document
+    .getElementById('checkBtn')
+    .classList
+    .add('hidden');
+
+
+  document
+    .getElementById('ticketSummary')
+    .innerHTML =
+
+      '<div class="result ok">' +
+
+        '<div class="big">' +
+          '✓ ENTRY CONFIRMED' +
+        '</div>' +
+
+        '<div>' +
+          esc(r.checkInQuantity) +
+          ' guest(s) checked in for ' +
+          esc(eventDate) +
+          '.' +
+        '</div>' +
+
+        '<div class="name">' +
+          esc(
+            r.ticket &&
+            r.ticket.name ||
+            ''
+          ) +
+        '</div>' +
+
+        '<div class="meta">' +
+          esc(
+            r.ticket &&
+            r.ticket.ticketType ||
+            ''
+          ) +
+        '</div>' +
+
+        '<div class="meta">' +
+          '<b>' +
+            esc(r.checkedIn) +
+          '</b> checked in · ' +
+
+          '<b>' +
+            esc(remaining) +
+          '</b> remaining' +
+
+        '</div>' +
+
+        (
+          remaining === 0
+            ?
+            '<div class="small">' +
+              'This date is now fully checked in.' +
+            '</div>'
+            :
+            ''
+        ) +
+
+        '<div class="small">' +
+          'Checked in by: ' +
+          esc(
+            r.checkedInBy ||
+            staffName
+          ) +
+        '</div>' +
+
+      '</div>';
+
+
+  setText(
+    'checkStatus',
+    ''
+  );
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+function showError(message){
+
+  document
+    .getElementById('ticketCard')
+    .classList
+    .remove('hidden');
+
+
+  document
+    .getElementById('ticketSummary')
+    .innerHTML =
+
+      '<div class="result bad">' +
+
+        '<div class="big">' +
+          'ERROR' +
+        '</div>' +
+
+        '<div>' +
+          esc(message) +
+        '</div>' +
+
+      '</div>';
+
+
+  document
+    .getElementById('dateArea')
+    .innerHTML = '';
+
+
+  document
+    .getElementById('qtyArea')
+    .innerHTML = '';
+
+
+  document
+    .getElementById('checkBtn')
+    .classList
+    .add('hidden');
+
+
+  setText(
+    'checkStatus',
+    ''
+  );
+}
+
+
+/* =========================================================
+   SESSION
+   ========================================================= */
+
+function isSessionError(e){
+
+  return !!(
+    e &&
+    e.message &&
+    e.message
+      .toLowerCase()
+      .includes('session')
+  );
+}
+
+
+function showLogin(){
+
+  document
+    .getElementById('loginCard')
+    .classList
+    .remove('hidden');
+
+
+  document
+    .getElementById('ticketCard')
+    .classList
+    .add('hidden');
+
+
+  document
+    .getElementById('staffPin')
+    .value = '';
+}
+
+
+function logout(){
+
+  const s =
+    sessionToken;
+
+
+  sessionToken = '';
+
+  staffName = '';
+
+
+  localStorage.removeItem(
+    'rdn_staff_session'
+  );
+
+  localStorage.removeItem(
+    'rdn_staff_name'
+  );
+
+
+  if(s){
+
+    google.script.run
+
+      .withSuccessHandler(
+        () => location.reload()
+      )
+
+      .withFailureHandler(
+        () => location.reload()
+      )
+
+      .staffLogout(s);
+
+  }else{
+
+    location.reload();
+
+  }
+}
+
+
+/* =========================================================
+   READ QR URL
+   ========================================================= */
+
+function parseLocation(){
+
+  google.script.url.getLocation(
+    function(loc){
+
+      const p =
+        loc && loc.parameter
+          ? loc.parameter
+          : {};
+
+
+      token =
+        String(
+          p.qr || ''
+        )
+        .trim()
+        .toUpperCase();
+
+
+      eventDate =
+        String(
+          p.date || ''
+        )
+        .trim();
+
+
+      if(!token){
+
+        showError(
+          'No ticket token was supplied.'
+        );
+
+        return;
+      }
+
+
+      if(sessionToken){
+
+        document
+          .getElementById('loginCard')
+          .classList
+          .add('hidden');
+
+
+        document
+          .getElementById('ticketCard')
+          .classList
+          .remove('hidden');
+
+
+        setText(
+          'staffPill',
+          staffName
+        );
+
+
+        loadTicket();
+      }
+
+    }
+  );
+}
+
+
+parseLocation();
+
+</script>
+
+</body>
+</html>

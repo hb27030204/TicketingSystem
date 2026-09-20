@@ -1,0 +1,88 @@
+# Supabase CLI project config. Run `supabase link --project-ref <ref>`
+# to connect this to your actual Supabase project before deploying.
+project_id = "ticketing-system"
+
+[api]
+enabled = true
+
+[db]
+port = 54322
+
+[auth]
+enabled = true
+
+# Email is the real Supabase Auth identifier now (OTP delivered by
+# email). Phone lives only on `profiles`, used by request-otp/verify-otp
+# to look up which email to send the code to - see those functions and
+# the plan doc for the full flow.
+[auth.email]
+enable_signup = true
+
+# Explicitly turning these off (not just deleting the blocks) - Supabase's
+# config push only touches properties actually declared here, so simply
+# removing them would leave phone auth + the send_sms hook enabled
+# remotely (the hook would still point at the now-deleted send-sms-hook
+# function). Belt and suspenders with the profiles.email NOT NULL
+# constraint, which would already reject a direct phone-only signup via
+# the handle_new_user() trigger - this closes the door at the platform
+# level too, so a stray call to the native phone-auth API can't create
+# an auth.users row our profiles logic never sees.
+[auth.sms]
+enable_signup = false
+
+[auth.hook.send_sms]
+enabled = false
+
+# raasdandya.in verified, SMTP live on MSG91 (mailer91). Still need to
+# switch Auth -> Email Templates -> "Magic Link" in the dashboard to use
+# {{ .Token }} (a typed code) instead of the default clickable-link
+# template, to match the app's "enter the code" UI - config.toml doesn't
+# manage email template content, that's dashboard-only.
+[auth.email.smtp]
+enabled = true
+host = "smtp.mailer91.com"
+port = 587
+user = "env(MSG91_SMTP_USER)"
+pass = "env(MSG91_SMTP_PASS)"
+# dho2js.mailer91.com (the account's auto-assigned default domain) turned
+# out to only be usable for test sends to invited team members, not real
+# customers - MSG91 rejected it outright ("Default domains are for test
+# purposes only"). raasdandya.in is the real verified domain and is what
+# should be used for actual delivery.
+admin_email = "otp@raasdandya.in"
+sender_name = "Raas Dandya"
+
+# Staff-facing functions authenticate with a custom fixed-code session
+# (see supabase/functions/_shared/staffAuth.ts), not a Supabase user JWT,
+# so the platform-level JWT gate must be off for them. Same for
+# request-otp/verify-otp, which run before the caller has any session at
+# all (that's their whole job - issuing the first session).
+[functions.request-otp]
+verify_jwt = false
+
+[functions.verify-otp]
+verify_jwt = false
+
+[functions.staff-login]
+verify_jwt = false
+
+[functions.get-ticket-for-checkin]
+verify_jwt = false
+
+[functions.checkin]
+verify_jwt = false
+
+[functions.staff-summary]
+verify_jwt = false
+
+[functions.set-checkin-enabled]
+verify_jwt = false
+
+[functions.admin-bookings]
+verify_jwt = false
+
+[functions.admin-staff-list]
+verify_jwt = false
+
+[functions.admin-checkin-log]
+verify_jwt = false

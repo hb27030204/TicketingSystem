@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <base target="_top">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+  >
+
+  <title>
+    Raz Dandya Nights — Staff
+  </title>
+
+  <style>
+
+    :root{
+      --bg:#0b090a;
+      --panel:#151214;
+      --line:#332d2f;
+      --gold:#d7ad52;
+      --gold2:#f1d48b;
+      --text:#f7f1e7;
+      --muted:#aaa1a2;
+      --green:#49d287;
+      --red:#d95b66
+    }
+
+    *{
+      box-sizing:border-box
+    }
+
+    body{
+      margin:0;
+      background:
+        radial-gradient(
+          circle at 50% 0,
+          #2b1d0b,
+          transparent 40%
+        ),
+        var(--bg);
+      color:var(--text);
+      font-family:Arial,sans-serif;
+      min-height:100vh
+    }
+
+    .wrap{
+      width:min(620px,92%);
+      margin:auto;
+      padding:28px 0 50px
+    }
+
+    .brand{
+      font-size:11px;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--gold2);
+      margin-bottom:28px
+    }
+
+    .card{
+      background:rgba(21,18,20,.97);
+      border:1px solid var(--line);
+      padding:24px;
+      margin-bottom:16px;
+      border-radius:14px
+    }
+
+    .hidden{
+      display:none!important
+    }
+
+    h1{
+      font-size:28px;
+      margin:0 0 8px
+    }
+
+    h2{
+      font-size:18px;
+      margin:0 0 16px
+    }
+
+    .sub{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.7;
+      margin-bottom:20px
+    }
+
+    label{
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      margin:0 0 7px
+    }
+
+    input,
+    button{
+      width:100%;
+      font:inherit
+    }
+
+    input{
+      background:#0d0b0c;
+      border:1px solid #40383a;
+      color:var(--text);
+      padding:14px;
+      outline:none;
+      margin-bottom:14px;
+      border-radius:9px
+    }
+
+    input:focus{
+      border-color:var(--gold)
+    }
+
+    button{
+      border:0;
+      padding:15px;
+      background:var(--gold);
+      color:#17100a;
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      cursor:pointer;
+      margin-top:4px;
+      border-radius:9px
+    }
+
+    button.secondary{
+      background:#28211b;
+      color:#ead9b8;
+      border:1px solid #493c2b
+    }
+
+    button:disabled{
+      opacity:.5;
+      cursor:not-allowed
+    }
+
+    .result{
+      margin-top:16px;
+      padding:16px;
+      border:1px solid var(--line);
+      line-height:1.6;
+      font-size:13px;
+      border-radius:10px
+    }
+
+    .ok{
+      border-color:#2f8759;
+      background:#102218
+    }
+
+    .bad{
+      border-color:#8b4047;
+      background:#281315
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px
+    }
+
+    .stat{
+      background:#0e0c0d;
+      border:1px solid var(--line);
+      padding:14px;
+      text-align:center;
+      border-radius:9px
+    }
+
+    .num{
+      font-size:25px;
+      font-weight:800;
+      color:var(--gold2)
+    }
+
+    .label2{
+      font-size:9px;
+      color:#8e8687;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      margin-top:4px
+    }
+
+    .steps{
+      display:grid;
+      gap:10px;
+      margin:0;
+      padding:0;
+      list-style:none
+    }
+
+    .steps li{
+      border:1px solid var(--line);
+      padding:13px;
+      border-radius:9px;
+      color:#ddd3c9;
+      font-size:12px;
+      line-height:1.5
+    }
+
+    .steps b{
+      color:var(--gold2)
+    }
+
+    /* CHECK-IN CONTROL */
+
+    .control-grid{
+      display:grid;
+      gap:10px
+    }
+
+    .control{
+      background:#0e0c0d;
+      border:1px solid var(--line);
+      padding:15px;
+      border-radius:10px
+    }
+
+    .control-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px
+    }
+
+    .control-date{
+      font-size:14px;
+      font-weight:700;
+      color:var(--text)
+    }
+
+    .control-status{
+      font-size:9px;
+      font-weight:800;
+      letter-spacing:1.2px;
+      text-transform:uppercase;
+      padding:6px 9px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      white-space:nowrap
+    }
+
+    .control-status.open{
+      color:#75e2a5;
+      background:#102218;
+      border-color:#2f8759
+    }
+
+    .control-status.closed{
+      color:#d9a0a5;
+      background:#281315;
+      border-color:#713b41
+    }
+
+    .control-buttons{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px
+    }
+
+    .control-buttons button{
+      margin-top:0;
+      padding:12px 8px;
+      font-size:11px
+    }
+
+    .open-btn{
+      background:#183322;
+      color:#8de8b4;
+      border:1px solid #2f8759
+    }
+
+    .close-btn{
+      background:#32171a;
+      color:#e9a7ad;
+      border:1px solid #713b41
+    }
+
+    .control-buttons button.active{
+      box-shadow:
+        0 0 0 1px var(--gold),
+        inset 0 0 0 1px rgba(255,255,255,.05)
+    }
+
+    .control-note{
+      margin-top:14px;
+      color:#8e8687;
+      font-size:10px;
+      line-height:1.6
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <div class="brand">
+    Raz Dandya Nights by AK · Staff
+  </div>
+
+
+  <!-- LOGIN -->
+
+  <div
+    class="card"
+    id="loginCard"
+  >
+
+    <h1>
+      Staff login
+    </h1>
+
+    <div class="sub">
+      Sign in here to view the entry dashboard.
+      The ticket QR itself does not authorize entry.
+    </div>
+
+
+    <label>
+      Staff name
+    </label>
+
+    <input
+      id="staffName"
+      autocomplete="name"
+      placeholder="Enter your name"
+    >
+
+
+    <label>
+      Staff PIN
+    </label>
+
+    <input
+      id="staffPin"
+      type="password"
+      inputmode="numeric"
+      autocomplete="off"
+      placeholder="Enter PIN"
+    >
+
+
+    <button
+      id="loginBtn"
+      onclick="login()"
+    >
+      Login
+    </button>
+
+
+    <div id="loginResult"></div>
+
+  </div>
+
+
+  <!-- STAFF -->
+
+  <div
+    class="card hidden"
+    id="staffCard"
+  >
+
+    <h1>
+      Secure entry
+    </h1>
+
+    <div
+      class="sub"
+      id="welcome"
+    ></div>
+
+
+    <ol class="steps">
+
+      <li>
+        <b>1.</b>
+        Use the phone's normal camera,
+        Google Lens, or any QR scanner.
+      </li>
+
+      <li>
+        <b>2.</b>
+        Scan the customer's ticket QR
+        and tap the link that appears.
+      </li>
+
+      <li>
+        <b>3.</b>
+        The secure check-in page opens.
+        Enter the staff PIN if requested.
+      </li>
+
+      <li>
+        <b>4.</b>
+        Confirm entry.
+        The server checks the ticket and records
+        the date, time and staff name in Google Sheets.
+      </li>
+
+    </ol>
+
+
+    <button
+      onclick="openCheckin()"
+    >
+      Open secure check-in page
+    </button>
+
+
+    <button
+      class="secondary"
+      onclick="refreshSummary()"
+    >
+      Refresh count
+    </button>
+
+
+    <button
+      class="secondary"
+      onclick="logout()"
+    >
+      Log out
+    </button>
+
+
+    <div id="result"></div>
+
+  </div>
+
+
+  <!-- CHECK-IN CONTROL -->
+
+  <div
+    class="card hidden"
+    id="controlCard"
+  >
+
+    <h2>
+      Check-in control
+    </h2>
+
+    <div class="sub">
+      Control whether staff can complete check-ins for each event date.
+      The server enforces these settings.
+    </div>
+
+
+    <div class="control-grid">
+
+      <!-- 17 OCT -->
+
+      <div class="control">
+
+        <div class="control-top">
+
+          <div class="control-date">
+            17 October 2026
+          </div>
+
+          <div
+            class="control-status closed"
+            id="status17"
+          >
+            CLOSED
+          </div>
+
+        </div>
+
+
+        <div class="control-buttons">
+
+          <button
+            class="open-btn"
+            id="open17Btn"
+            onclick="setCheckinDate('17th October 2026',true)"
+          >
+            Open
+          </button>
+
+          <button
+            class="close-btn"
+            id="close17Btn"
+            onclick="setCheckinDate('17th October 2026',false)"
+          >
+            Close
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- 18 OCT -->
+
+      <div class="control">
+
+        <div class="control-top">
+
+          <div class="control-date">
+            18 October 2026
+          </div>
+
+          <div
+            class="control-status closed"
+            id="status18"
+          >
+            CLOSED
+          </div>
+
+        </div>
+
+
+        <div class="control-buttons">
+
+          <button
+            class="open-btn"
+            id="open18Btn"
+            onclick="setCheckinDate('18th October 2026',true)"
+          >
+            Open
+          </button>
+
+          <button
+            class="close-btn"
+            id="close18Btn"
+            onclick="setCheckinDate('18th October 2026',false)"
+          >
+            Close
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="control-note">
+      Keep check-in CLOSED until you are ready to admit guests.
+      Closing a date immediately prevents new check-ins for that date.
+    </div>
+
+
+    <div id="controlResult"></div>
+
+  </div>
+
+
+  <!-- DASHBOARD -->
+
+  <div
+    class="card hidden"
+    id="dashboardCard"
+  >
+
+    <h2>
+      Entry count
+    </h2>
+
+
+    <div class="stats">
+
+      <div class="stat">
+        <div
+          class="num"
+          id="paid17"
+        >
+          0
+        </div>
+
+        <div class="label2">
+          Paid · 17 Oct
+        </div>
+      </div>
+
+
+      <div class="stat">
+        <div
+          class="num"
+          id="checked17"
+        >
+          0
+        </div>
+
+        <div class="label2">
+          Checked · 17 Oct
+        </div>
+      </div>
+
+
+      <div class="stat">
+        <div
+          class="num"
+          id="paid18"
+        >
+          0
+        </div>
+
+        <div class="label2">
+          Paid · 18 Oct
+        </div>
+      </div>
+
+
+      <div class="stat">
+        <div
+          class="num"
+          id="checked18"
+        >
+          0
+        </div>
+
+        <div class="label2">
+          Checked · 18 Oct
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const APP_URL =
+  'https://script.google.com/macros/s/AKfycbxL-gqxmNd4iuEavHRnZuN1B56KDoC-dVKaYyYoWyo9k2xAVBCB3Z_YWMCSyrbXH-0btQ/exec';
+
+
+let sessionToken =
+  sessionStorage.getItem(
+    'rdn_staff_session'
+  ) ||
+  localStorage.getItem(
+    'rdn_staff_session'
+  ) ||
+  '';
+
+
+let staffName =
+  sessionStorage.getItem(
+    'rdn_staff_name'
+  ) ||
+  localStorage.getItem(
+    'rdn_staff_name'
+  ) ||
+  '';
+
+
+/* =========================
+   LOGIN
+========================= */
+
+function login() {
+
+  const name =
+    document
+      .getElementById(
+        'staffName'
+      )
+      .value
+      .trim();
+
+
+  const pin =
+    document
+      .getElementById(
+        'staffPin'
+      )
+      .value
+      .trim();
+
+
+  if (
+    !name ||
+    !pin
+  ) {
+
+    return showLogin(
+      'Enter your staff name and PIN.',
+      'bad'
+    );
+  }
+
+
+  document
+    .getElementById(
+      'loginBtn'
+    )
+    .disabled = true;
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r) {
+
+        document
+          .getElementById(
+            'loginBtn'
+          )
+          .disabled = false;
+
+
+        if (
+          !r ||
+          !r.success
+        ) {
+
+          return showLogin(
+            'Login failed.',
+            'bad'
+          );
+        }
+
+
+        sessionToken =
+          r.sessionToken;
+
+        staffName =
+          r.staffName ||
+          name;
+
+
+        sessionStorage.setItem(
+          'rdn_staff_session',
+          sessionToken
+        );
+
+        sessionStorage.setItem(
+          'rdn_staff_name',
+          staffName
+        );
+
+
+        showStaff();
+
+        refreshSummary();
+
+        loadCheckinControl();
+
+      }
+    )
+
+    .withFailureHandler(
+      function(e) {
+
+        document
+          .getElementById(
+            'loginBtn'
+          )
+          .disabled = false;
+
+
+        showLogin(
+          e &&
+          e.message
+            ? e.message
+            : 'Login failed.',
+          'bad'
+        );
+
+      }
+    )
+
+    .staffLogin(
+      name,
+      pin
+    );
+}
+
+
+function showLogin(
+  msg,
+  cls
+) {
+
+  document
+    .getElementById(
+      'loginResult'
+    )
+    .innerHTML =
+      msg
+        ? '<div class="result ' +
+          cls +
+          '">' +
+          escapeHtml(msg) +
+          '</div>'
+        : '';
+}
+
+
+/* =========================
+   SHOW STAFF
+========================= */
+
+function showStaff() {
+
+  document
+    .getElementById(
+      'loginCard'
+    )
+    .classList.add(
+      'hidden'
+    );
+
+
+  document
+    .getElementById(
+      'staffCard'
+    )
+    .classList.remove(
+      'hidden'
+    );
+
+
+  document
+    .getElementById(
+      'controlCard'
+    )
+    .classList.remove(
+      'hidden'
+    );
+
+
+  document
+    .getElementById(
+      'dashboardCard'
+    )
+    .classList.remove(
+      'hidden'
+    );
+
+
+  document
+    .getElementById(
+      'welcome'
+    )
+    .textContent =
+      'Signed in as ' +
+      staffName +
+      '. QR scanning is handled by the phone\'s normal QR scanner.';
+}
+
+
+/* =========================
+   CHECK-IN PAGE
+========================= */
+
+function openCheckin() {
+
+  window.open(
+    APP_URL +
+    '?page=checkin',
+    '_blank'
+  );
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+function refreshSummary() {
+
+  if (!sessionToken) {
+    return;
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r) {
+
+        if (!r) {
+          return;
+        }
+
+
+        document
+          .getElementById(
+            'paid17'
+          )
+          .textContent =
+            r.paid17 || 0;
+
+
+        document
+          .getElementById(
+            'checked17'
+          )
+          .textContent =
+            r.checked17 || 0;
+
+
+        document
+          .getElementById(
+            'paid18'
+          )
+          .textContent =
+            r.paid18 || 0;
+
+
+        document
+          .getElementById(
+            'checked18'
+          )
+          .textContent =
+            r.checked18 || 0;
+
+
+        /*
+         * getCheckInSummary already contains
+         * the authoritative enabled state.
+         *
+         * Use it as an additional refresh.
+         */
+
+        if (
+          typeof r.checkIn17Enabled !==
+          'undefined'
+        ) {
+
+          updateControlVisual(
+            '17',
+            !!r.checkIn17Enabled
+          );
+
+        }
+
+
+        if (
+          typeof r.checkIn18Enabled !==
+          'undefined'
+        ) {
+
+          updateControlVisual(
+            '18',
+            !!r.checkIn18Enabled
+          );
+
+        }
+
+      }
+    )
+
+    .withFailureHandler(
+      function(e) {
+
+        handleSessionFailure(e);
+
+      }
+    )
+
+    .getCheckInSummary(
+      sessionToken
+    );
+}
+
+
+/* =========================
+   CHECK-IN CONTROL
+========================= */
+
+function loadCheckinControl() {
+
+  if (!sessionToken) {
+    return;
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r) {
+
+        if (
+          !r ||
+          !r.success
+        ) {
+
+          showControlResult(
+            'Unable to load check-in controls.',
+            'bad'
+          );
+
+          return;
+        }
+
+
+        updateControlVisual(
+          '17',
+          !!r.checkIn17Enabled
+        );
+
+
+        updateControlVisual(
+          '18',
+          !!r.checkIn18Enabled
+        );
+
+      }
+    )
+
+    .withFailureHandler(
+      function(e) {
+
+        handleSessionFailure(e);
+
+      }
+    )
+
+    .getCheckInControl(
+      sessionToken
+    );
+}
+
+
+function setCheckinDate(
+  eventDate,
+  enabled
+) {
+
+  if (!sessionToken) {
+
+    return showControlResult(
+      'Your staff session has expired. Please log in again.',
+      'bad'
+    );
+
+  }
+
+
+  const day =
+    eventDate.includes('17th')
+      ? '17'
+      : '18';
+
+
+  const openBtn =
+    document.getElementById(
+      'open' + day + 'Btn'
+    );
+
+  const closeBtn =
+    document.getElementById(
+      'close' + day + 'Btn'
+    );
+
+
+  openBtn.disabled = true;
+  closeBtn.disabled = true;
+
+
+  showControlResult(
+    enabled
+      ? 'Opening check-in for ' + eventDate + '…'
+      : 'Closing check-in for ' + eventDate + '…',
+    ''
+  );
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r) {
+
+        openBtn.disabled = false;
+        closeBtn.disabled = false;
+
+
+        if (
+          !r ||
+          !r.success
+        ) {
+
+          showControlResult(
+            r &&
+            r.message
+              ? r.message
+              : 'Unable to change check-in status.',
+            'bad'
+          );
+
+          return;
+        }
+
+
+        updateControlVisual(
+          day,
+          !!r.enabled
+        );
+
+
+        showControlResult(
+          r.enabled
+            ? 'Check-in is now OPEN for ' + eventDate + '.'
+            : 'Check-in is now CLOSED for ' + eventDate + '.',
+          'ok'
+        );
+
+      }
+    )
+
+    .withFailureHandler(
+      function(e) {
+
+        openBtn.disabled = false;
+        closeBtn.disabled = false;
+
+
+        handleSessionFailure(e);
+
+      }
+    )
+
+    .setCheckInDateEnabled(
+      sessionToken,
+      eventDate,
+      enabled
+    );
+}
+
+
+function updateControlVisual(
+  day,
+  enabled
+) {
+
+  const status =
+    document.getElementById(
+      'status' + day
+    );
+
+
+  const openBtn =
+    document.getElementById(
+      'open' + day + 'Btn'
+    );
+
+
+  const closeBtn =
+    document.getElementById(
+      'close' + day + 'Btn'
+    );
+
+
+  if (!status) {
+    return;
+  }
+
+
+  status.textContent =
+    enabled
+      ? 'OPEN'
+      : 'CLOSED';
+
+
+  status.classList.toggle(
+    'open',
+    enabled
+  );
+
+
+  status.classList.toggle(
+    'closed',
+    !enabled
+  );
+
+
+  if (openBtn) {
+
+    openBtn.classList.toggle(
+      'active',
+      enabled
+    );
+
+  }
+
+
+  if (closeBtn) {
+
+    closeBtn.classList.toggle(
+      'active',
+      !enabled
+    );
+
+  }
+
+}
+
+
+function showControlResult(
+  msg,
+  cls
+) {
+
+  document
+    .getElementById(
+      'controlResult'
+    )
+    .innerHTML =
+      msg
+        ? '<div class="result ' +
+          (cls || '') +
+          '">' +
+          escapeHtml(msg) +
+          '</div>'
+        : '';
+
+}
+
+
+/* =========================
+   SESSION ERROR
+========================= */
+
+function handleSessionFailure(e) {
+
+  const message =
+    e &&
+    e.message
+      ? e.message
+      : '';
+
+
+  if (
+    message
+      .toLowerCase()
+      .includes('session')
+  ) {
+
+    sessionToken = '';
+
+
+    sessionStorage.removeItem(
+      'rdn_staff_session'
+    );
+
+    sessionStorage.removeItem(
+      'rdn_staff_name'
+    );
+
+
+    showLogin(
+      'Your staff session expired. Please log in again.',
+      'bad'
+    );
+
+  }
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout() {
+
+  const s =
+    sessionToken;
+
+
+  sessionToken = '';
+
+
+  sessionStorage.removeItem(
+    'rdn_staff_session'
+  );
+
+  sessionStorage.removeItem(
+    'rdn_staff_name'
+  );
+
+  localStorage.removeItem(
+    'rdn_staff_session'
+  );
+
+  localStorage.removeItem(
+    'rdn_staff_name'
+  );
+
+
+  if (s) {
+
+    google.script.run
+
+      .withSuccessHandler(
+        function() {
+          location.reload();
+        }
+      )
+
+      .withFailureHandler(
+        function() {
+          location.reload();
+        }
+      )
+
+      .staffLogout(s);
+
+  }
+
+  else {
+
+    location.reload();
+
+  }
+}
+
+
+/* =========================
+   HTML ESCAPE
+========================= */
+
+function escapeHtml(s) {
+
+  return String(
+    s == null ? '' : s
+  ).replace(
+    /[&<>'"]/g,
+    function(c) {
+
+      return {
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        "'":'&#39;',
+        '"':'&quot;'
+      }[c];
+
+    }
+  );
+}
+
+
+/* =========================
+   AUTO RESTORE SESSION
+========================= */
+
+if (sessionToken) {
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r) {
+
+        if (
+          r &&
+          r.success
+        ) {
+
+          staffName =
+            r.staffName ||
+            staffName;
+
+
+          sessionStorage.setItem(
+            'rdn_staff_session',
+            sessionToken
+          );
+
+          sessionStorage.setItem(
+            'rdn_staff_name',
+            staffName
+          );
+
+
+          showStaff();
+
+          refreshSummary();
+
+          loadCheckinControl();
+
+        }
+
+        else {
+
+          sessionToken = '';
+
+
+          sessionStorage.removeItem(
+            'rdn_staff_session'
+          );
+
+
+          showLogin(
+            'Please log in again.',
+            'bad'
+          );
+
+        }
+
+      }
+    )
+
+    .withFailureHandler(
+      function() {
+
+        sessionToken = '';
+
+
+        sessionStorage.removeItem(
+          'rdn_staff_session'
+        );
+
+
+        showLogin(
+          'Please log in again.',
+          'bad'
+        );
+
+      }
+    )
+
+    .staffHealthCheck(
+      sessionToken
+    );
+}
+
+</script>
+
+</body>
+</html>

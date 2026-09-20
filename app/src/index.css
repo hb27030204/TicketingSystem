@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light dark;
+
+  /* Raas Dandya brand tokens, ported from the old design. Used directly
+     by the customer-facing pages (Home, TicketCard, Hero, Footer, Login)
+     via CSS custom properties rather than Tailwind's dark: variants,
+     since this is a fixed dark theme, not a light/dark toggle. Staff and
+     Checkin pages are out of scope and keep their neutral Tailwind look. */
+  --rd-bg: #090709;
+  --rd-panel: #151014;
+  --rd-panel-2: #100c10;
+  --rd-line: rgba(255, 255, 255, 0.09);
+  --rd-gold: #d7ad52;
+  --rd-gold-2: #f6dc95;
+  --rd-text: #faf5ed;
+  --rd-muted: #aaa0a5;
+  --rd-green: #55d48a;
+  --rd-red: #e86b72;
+  --rd-purple: #8e5be8;
+}
+
+body {
+  margin: 0;
+  font-family: "DM Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+}
+
+.rd-page {
+  background:
+    radial-gradient(circle at 8% 16%, rgba(215, 173, 82, 0.14), transparent 24%),
+    radial-gradient(circle at 92% 34%, rgba(151, 48, 104, 0.18), transparent 27%),
+    radial-gradient(circle at 52% 72%, rgba(81, 38, 143, 0.12), transparent 28%),
+    linear-gradient(180deg, #090709 0%, #0d080c 42%, #0a070b 100%);
+  color: var(--rd-text);
+  min-height: 100vh;
+}
+
+.rd-heading {
+  font-family: "Playfair Display", Georgia, serif;
+}
