@@ -222,7 +222,7 @@ export function Landing() {
             <div className="ld-venue-facts">
               <span><b>17 OCT</b>RAAS GARBHA</span>
               <span><b>18 OCT</b>DANDIYA 2.0</span>
-              <span><b>6 PM+</b>DOORS OPEN</span>
+              <span><b>5 PM+</b>DOORS OPEN</span>
             </div>
           </div>
           <div className="ld-venue-art-card">
