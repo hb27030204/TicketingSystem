@@ -3,7 +3,7 @@
 :root {
   color-scheme: light dark;
 
-  /* Raas Dandya brand tokens, ported from the old design. Used directly
+  /* Raas Garbha X Dandiya 2.0 brand tokens, ported from the old design. Used directly
      by the customer-facing pages (Home, TicketCard, Hero, Footer, Login)
      via CSS custom properties rather than Tailwind's dark: variants,
      since this is a fixed dark theme, not a light/dark toggle. Staff and
@@ -24,6 +24,13 @@
 body {
   margin: 0;
   font-family: "DM Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+  /* Guards against decorative elements (marquees, ambient glow orbs)
+     bleeding past the viewport edge. Deliberately on body, not on a
+     nested page wrapper (.ld-page used to have it) - overflow on any
+     non-root ancestor makes it the "nearest scroll container" and
+     silently breaks position:sticky for everything inside it, which is
+     exactly what broke the sticky Nav. */
+  overflow-x: hidden;
 }
 
 .rd-page {

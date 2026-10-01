@@ -11,7 +11,20 @@
   padding: 18px clamp(16px, 4vw, 48px);
   border-bottom: 1px solid var(--rd-line);
 }
+
+/* Everywhere except /book (see Nav.tsx) - pinned to the top while
+   scrolling, with a blurred backdrop so page content doesn't show
+   through as it scrolls underneath. */
+.rd-nav-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(9, 7, 9, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
 .rd-nav-brand {
+  min-width: 0;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 2.4px;
@@ -20,6 +33,13 @@
 }
 .rd-nav-brand span { color: var(--rd-gold-2); }
 .rd-nav-actions { display: flex; align-items: center; gap: 10px; }
+
+@media (max-width: 560px) {
+  .rd-nav-brand {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+  }
+}
 .rd-nav-book {
   border-radius: 999px;
   padding: 9px 18px;

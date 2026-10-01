@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import venueQr from '../assets/venue-location-qr.png'
 import { Footer } from '../components/Footer'
 import { Hero } from '../components/Hero'
 import { Nav } from '../components/Nav'
@@ -13,6 +14,7 @@ import {
 } from '../lib/razorpay'
 import { RAZORPAY_KEY_ID } from '../lib/env'
 import { supabase } from '../lib/supabaseClient'
+import { VENUE_MAPS_URL, VENUE_NAME } from '../lib/venue'
 import type { EventSetting, TicketType } from '../types/db'
 
 const PENDING_KEY = 'ticketing_pending_selection'
@@ -136,7 +138,7 @@ export function Home() {
         key: RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: 'INR',
-        name: 'Raas Dandya',
+        name: 'Raas Garbha X Dandiya 2.0',
         description: selectedType.label,
         order_id: order.razorpayOrderId,
         prefill: { contact: profilePhone },
@@ -193,9 +195,49 @@ export function Home() {
         <h2 className="rd-heading mb-2 text-center text-3xl" style={{ color: 'var(--rd-text)' }}>
           Pick your night.
         </h2>
-        <p className="mb-8 text-center text-sm" style={{ color: 'var(--rd-muted)' }}>
+        <p className="mb-3 text-center text-sm" style={{ color: 'var(--rd-muted)' }}>
           Two nights. Different energy. Same Raas spirit.
         </p>
+
+        <div
+          className="mb-8 rounded-2xl border p-4 text-left"
+          style={{ borderColor: 'var(--rd-line)', background: 'var(--rd-panel)' }}
+        >
+          <div
+            className="flex items-center justify-between border-b pb-3"
+            style={{ borderColor: 'var(--rd-line)' }}
+          >
+            <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
+              Event Timing
+            </span>
+            <span className="text-sm font-semibold" style={{ color: 'var(--rd-text)' }}>
+              5:00 PM – 10:00 PM
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4 pt-3">
+            <div className="flex-1">
+              <p className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
+                Venue
+              </p>
+              <p className="font-medium" style={{ color: 'var(--rd-text)' }}>
+                {VENUE_NAME}
+              </p>
+              <p className="text-xs" style={{ color: 'var(--rd-muted)' }}>
+                Vijayapura · Scan or Tap the QR for directions
+              </p>
+            </div>
+            <a
+              href={VENUE_MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block flex-shrink-0 rounded-md bg-white p-1"
+              aria-label={`Open ${VENUE_NAME} in Google Maps`}
+            >
+              <img src={venueQr} alt="" width={48} height={48} className="block" />
+            </a>
+          </div>
+        </div>
 
         <div
           className="rounded-2xl border p-5"
@@ -258,11 +300,6 @@ export function Home() {
                     </span>
                     <span style={{ color: 'var(--rd-gold-2)' }}>₹{t.price.toLocaleString('en-IN')}</span>
                   </div>
-                  {t.is_multi_day && (
-                    <span className="text-xs" style={{ color: 'var(--rd-muted)' }}>
-                      Valid both nights
-                    </span>
-                  )}
                 </button>
               ))}
             </div>

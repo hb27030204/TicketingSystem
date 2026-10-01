@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom'
 
+import dandiyaEnergyImage from '../assets/DandiyaEnergy.jpg'
 import heroImage from '../assets/landing-hero.jpg'
+import raasDandiyaLogo from '../assets/RaasDandiyaLogo.png'
+import theRaasCrowdImage from '../assets/TheRaasCrowd.jpg'
+import venueQr from '../assets/venue-location-qr.png'
 import { Footer } from '../components/Footer'
 import { Nav } from '../components/Nav'
+import { VENUE_MAPS_URL, VENUE_NAME } from '../lib/venue'
 import '../styles/landing.css'
 
 const BRANDS = [
@@ -15,39 +20,39 @@ const BRANDS = [
 ]
 
 const GALLERY = [
+  // {
+  //   n: '01',
+  //   title: 'Festival Faces',
+  //   sub: 'Colour · Dance · Star energy',
+  //   img: 'https://static.toiimg.com/thumb/124702161.jpg?imgsize=23456&photoid=124702161&resizemode=4&width=900',
+  //   alt: 'Garbha festival performance',
+  //   main: true,
+  // },
   {
     n: '01',
-    title: 'Festival Faces',
-    sub: 'Colour · Dance · Star energy',
-    img: 'https://static.toiimg.com/thumb/124702161.jpg?imgsize=23456&photoid=124702161&resizemode=4&width=900',
-    alt: 'Garba festival performance',
-    main: true,
-  },
-  {
-    n: '02',
     title: 'Dandiya Energy',
     sub: 'Music · Movement · Crowd',
-    img: 'https://feeds.abplive.com/onecms/images/uploaded-images/2025/09/27/35eb9df1dba4191072317e54aa2adf5d17589811520141302_original.jpg?impolicy=abp_cdn&imwidth=1200',
+    img: dandiyaEnergyImage,
     alt: 'Dandiya night celebration',
   },
+  // {
+  //   n: '03',
+  //   title: 'Celebrity Moments',
+  //   sub: 'Festival nights · Big energy',
+  //   img: 'https://filmfare.wwmindia.com/content/2024/oct/rajkummarraoandtriptiidimri11728199224.jpg',
+  //   alt: 'Celebrity Navratri celebration',
+  // },
   {
-    n: '03',
-    title: 'Celebrity Moments',
-    sub: 'Festival nights · Big energy',
-    img: 'https://filmfare.wwmindia.com/content/2024/oct/rajkummarraoandtriptiidimri11728199224.jpg',
-    alt: 'Celebrity Navratri celebration',
-  },
-  {
-    n: '04',
+    n: '02',
     title: 'The RAAS Crowd',
     sub: 'Dress up · Show up · Dance',
-    img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Navratri%20Garba%20Dancers.jpg',
-    alt: 'Garba dancers in traditional dress',
+    img: theRaasCrowdImage,
+    alt: 'Garbha dancers in traditional dress',
   },
 ]
 
 function PulseRibbon({ reverse = false }: { reverse?: boolean }) {
-  const items = ['✦ RAAS DANDYA', 'BIJAPUR LET’S DANDYA', '✦ 17 OCT DANDIYA', '18 OCT DJ GARBA', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
+  const items = ['✦ RAAS GARBHA X DANDIYA 2.0', 'BIJAPUR LET’S DANDIYA', '✦ 17 OCT RAAS GARBHA', '18 OCT DANDIYA 2.0', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
   const doubled = [...items, ...items]
   return (
     <section className={`ld-pulse${reverse ? ' ld-pulse-reverse' : ''}`} aria-hidden="true">
@@ -94,7 +99,7 @@ export function Landing() {
           <div className="ld-hero-spark ld-hero-spark-2">✦</div>
           <div className="ld-hero-spark ld-hero-spark-3">✦</div>
 
-          <img className="ld-hero-image" src={heroImage} alt="RAAS Garba festival celebration" />
+          <img className="ld-hero-image" src={heroImage} alt="RAAS Garbha festival celebration" />
 
           <div className="ld-hero-sparkles" aria-hidden="true">
             <b /><b /><b /><b /><b /><b />
@@ -103,25 +108,25 @@ export function Landing() {
           <div className="ld-hero-dates">
             <div className="ld-hero-date-card">
               <small>17 October</small>
-              <strong>Dandiya Night</strong>
+              <strong>RAAS GARBHA</strong>
             </div>
             <div className="ld-hero-date-card">
               <small>18 October</small>
-              <strong>DJ Garba Night</strong>
+              <strong>DANDIYA 2.0</strong>
             </div>
           </div>
 
           <div className="ld-hero-content">
-            <span className="ld-eyebrow">RAAS DANDYA · BY AK</span>
+            <span className="ld-eyebrow">RAAS GARBHA X DANDIYA 2.0 · BY AK</span>
             <h1>
-              Bijapur, Let&rsquo;s Dandya!
+              Bijapur, Let&rsquo;s Dandiya!
               <span>Where the city comes to celebrate</span>
             </h1>
-            <p>Music · Dandya · DJ · Colour · Energy · Together</p>
+            <p>Music · Dandiya · DJ · Energy · Together</p>
             <div className="ld-hero-meta">
-              <div>17 Oct · Dandiya</div>
-              <div>18 Oct · DJ Garba</div>
-              <div>Bijapur · Venue Details</div>
+              <div>17 Oct · Raas Garbha</div>
+              <div>18 Oct · Dandiya 2.0</div>
+              <div>{VENUE_NAME}</div>
             </div>
             <Link to="/book" className="ld-hero-cta">
               Book a ticket ↗
@@ -132,11 +137,10 @@ export function Landing() {
             <div className="ld-hero-marquee-track">
               {Array.from({ length: 2 }).map((_, i) => (
                 <span key={i}>
-                  <span>RAAS DANDYA</span>
-                  <span>DANDIYA NIGHT</span>
-                  <span>DJ GARBA NIGHT</span>
-                  <span>17 · 18 OCTOBER 2026</span>
-                  <span>BIJAPUR · VENUE DETAILS</span>
+                  <span>RAAS GARBHA X DANDIYA 2.0</span>
+                  <span>17 OCT · RAAS GARBHA</span>
+                  <span>18 OCT · DANDIYA 2.0</span>
+                  <span>{VENUE_NAME.toUpperCase()}</span>
                 </span>
               ))}
             </div>
@@ -145,7 +149,7 @@ export function Landing() {
       </header>
 
       <section className="ld-brand-banner" aria-label="Featured brand visuals">
-        <div className="ld-brand-label">FEATURED BRANDS <span>·</span> LAUNCH VISUALS</div>
+        <div className="ld-brand-label">FEATURED BRANDS</div>
         <div className="ld-brand-window">
           <div className="ld-brand-track">
             <BrandMarqueeSet />
@@ -158,15 +162,15 @@ export function Landing() {
         <div className="ld-kicker">THE PEOPLE · THE ENERGY · THE NIGHT</div>
         <div className="ld-section-head">
           <h2>
-            Come for the Dandya.
+            Come for the Dandiya.
             <br />
             <span>Stay for the madness.</span>
           </h2>
-          <p>RAAS DANDYA is built to feel less like an event you attend and more like a night you remember.</p>
+          <p>RAAS GARBHA X DANDIYA 2.0 is built to feel less like an event you attend and more like a night you remember.</p>
         </div>
         <div className="ld-gallery">
           {GALLERY.map((g) => (
-            <article className={`ld-face-card${g.main ? ' ld-face-main' : ''}`} key={g.n}>
+            <article className="ld-face-card" key={g.n}>
               <div className="ld-face-image">
                 <img src={g.img} alt={g.alt} loading="lazy" />
               </div>
@@ -179,7 +183,7 @@ export function Landing() {
           ))}
         </div>
         <div className="ld-ticker-row" aria-hidden="true">
-          <span>TURN UP</span><i>✦</i><span>SHOW UP</span><i>✦</i><span>PAIR UP</span><i>✦</i><span>DANDYA ALL NIGHT</span><i>✦</i><span>MAKE SOME NOISE</span><i>✦</i>
+          <span>TURN UP</span><i>✦</i><span>SHOW UP</span><i>✦</i><span>PAIR UP</span><i>✦</i><span>DANDIYA ALL NIGHT</span><i>✦</i><span>MAKE SOME NOISE</span><i>✦</i>
         </div>
       </section>
 
@@ -196,28 +200,37 @@ export function Landing() {
               <em>Bijapur.</em>
             </h2>
             <p className="ld-venue-lead">
-              RAAS DANDYA is bringing two nights of music, colour and celebration to <strong>Bijapur.</strong>
+              RAAS GARBHA X DANDIYA 2.0 is bringing two nights of music, colour and celebration to <strong>Bijapur.</strong>
             </p>
             <div className="ld-venue-location-card">
               <div className="ld-venue-pin">⌖</div>
-              <div>
+              <div className="ld-venue-location-copy">
                 <small>VENUE</small>
-                <strong>Bijapur · Venue Details</strong>
-                <span>Official venue information will be highlighted here.</span>
+                <strong>{VENUE_NAME}</strong>
+                <span>Vijayapura · Scan or Tap the QR for directions</span>
               </div>
+              <a
+                href={VENUE_MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ld-venue-qr"
+                aria-label={`Open ${VENUE_NAME} in Google Maps`}
+              >
+                <img src={venueQr} alt="" />
+              </a>
             </div>
             <div className="ld-venue-facts">
-              <span><b>17 OCT</b>DANDIYA NIGHT</span>
-              <span><b>18 OCT</b>DJ GARBA NIGHT</span>
+              <span><b>17 OCT</b>RAAS GARBHA</span>
+              <span><b>18 OCT</b>DANDIYA 2.0</span>
               <span><b>6 PM+</b>DOORS OPEN</span>
             </div>
           </div>
           <div className="ld-venue-art-card">
             <div className="ld-venue-art-top">
-              <span>RAAS DANDYA</span>
-              <b>BIJAPUR</b>
+              <span>RAAS GARBHA X DANDIYA 2.0</span>
+              {/* <b>BIJAPUR</b> */}
             </div>
-            <div className="ld-venue-monogram">R</div>
+            <img className="ld-venue-monogram" src={raasDandiyaLogo} alt="Raas Garbha X Dandiya 2.0 emblem" />
             <div className="ld-venue-ring ld-ring-a" />
             <div className="ld-venue-ring ld-ring-b" />
             <div className="ld-venue-art-bottom">
@@ -241,10 +254,10 @@ export function Landing() {
               <span>brands people love.</span>
             </h2>
           </div>
-          <p>
+          {/* <p>
             Our launch brand wall uses popular brand visuals for now. Replace these with your{' '}
-            <strong>confirmed RAAS DANDYA sponsors and collaborators</strong> before going live.
-          </p>
+            <strong>confirmed RAAS GARBHA X DANDIYA 2.0 sponsors and collaborators</strong> before going live.
+          </p> */}
         </div>
         <div className="ld-brand-grid">
           {BRANDS.map((b) => (
@@ -257,11 +270,11 @@ export function Landing() {
             </div>
           ))}
         </div>
-        <div className="ld-brand-wall-note">
+        {/* <div className="ld-brand-wall-note">
           <i>✦</i>
           <span>YOUR CONFIRMED SPONSORS GO HERE</span>
           <i>✦</i>
-        </div>
+        </div> */}
       </section>
 
       <Footer />

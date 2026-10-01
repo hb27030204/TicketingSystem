@@ -31,12 +31,12 @@ export async function sendTicketLinkEmail(
       recipients: [
         {
           to: [{ email: toEmail, name: toName }],
-          // The template body has the placeholder written as {{link}},
-          // but MSG91 matches it by the bare variable name - sending the
-          // key with braces included left it unmatched and blank.
-          // Confirmed live: braces included rendered an empty link,
-          // dropping the braces rendered the real URL correctly.
-          variables: { link },
+          // The template body has placeholders written as {{link}} and
+          // {{name}}, but MSG91 matches them by the bare variable name -
+          // sending the key with braces included left it unmatched and
+          // blank. Confirmed live: braces included rendered an empty
+          // link, dropping the braces rendered the real URL correctly.
+          variables: { link, name: toName },
         },
       ],
       from: { email: fromEmail },

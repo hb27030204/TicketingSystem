@@ -1,10 +1,12 @@
+import venueQr from '../assets/venue-location-qr.png'
+import { VENUE_MAPS_URL, VENUE_NAME } from '../lib/venue'
 import type { MyTicket, TicketType } from '../types/db'
 
 type Theme = 'garba' | 'dj' | 'kids'
 
 const NIGHT_NAMES: Record<string, string> = {
-  '2026-10-17': 'Dandiya Night',
-  '2026-10-18': 'DJ Garba Night',
+  '2026-10-17': 'Raas Garbha',
+  '2026-10-18': 'Dandiya 2.0',
 }
 
 function isKids(ticketType: TicketType): boolean {
@@ -28,10 +30,14 @@ function getAdmitText(ticketType: TicketType): string {
   return 'ADMIT 01'
 }
 
+// Sits directly under the big "RAAS" title (see ticket-title below), so
+// this intentionally drops the "Raas" from the garba night's full name
+// ("Raas Garbha") to avoid reading as "RAAS Raas Garbha" - the full name
+// still appears on its own further down, next to the date.
 function getScriptText(theme: Theme): string {
-  if (theme === 'kids') return 'Kids Garba'
-  if (theme === 'dj') return 'DJ Garba Night'
-  return 'Dandiya Night'
+  if (theme === 'kids') return 'Kids Garbha'
+  if (theme === 'dj') return 'Dandiya 2.0'
+  return 'Garbha'
 }
 
 function formatDateLabel(dates: string[]): string {
@@ -60,7 +66,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
         <div className="ticket-pattern" />
 
         <div className="ticket-top">
-          <div className="ticket-logo">RAAS DANDYA · BY AK</div>
+          <div className="ticket-logo">RAAS GARBHA X DANDIYA 2.0 · BY AK</div>
           <div className="ticket-ornament">✦ ✧ ✦</div>
           <h3 className="ticket-title">RAAS</h3>
           <div className="ticket-script">{scriptText}</div>
@@ -102,7 +108,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
             </div>
             <div className="ticket-field">
               <small>Entry</small>
-              <b>06:00 PM Onwards</b>
+              <b>5:00 PM – 10:00 PM</b>
             </div>
             <div className="ticket-field">
               <small>Status</small>
@@ -140,7 +146,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
         <div className="ticket-pattern" />
 
         <div className="back-inner">
-          <div className="back-logo">RAAS DANDYA · BY AK</div>
+          <div className="back-logo">RAAS GARBHA X DANDIYA 2.0 · BY AK</div>
           <div className="back-script">
             {theme === 'kids' ? (
               <>
@@ -151,16 +157,45 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
             ) : theme === 'dj' ? (
               'Good Vibes Only'
             ) : (
-              "Let's Dandya!"
+              "Let's Dandiya!"
             )}
           </div>
           <div className="back-tag">Music · Dance · Energy · Together</div>
 
           <div className="back-divider" />
           <div className="back-heading">Event Information</div>
-          <div className="back-line">📅 {dateLabel} — {nightName}</div>
-          <div className="back-line">🕕 06:00 PM Onwards</div>
-          <div className="back-line">📍 Tamra, Shangri-La Rajpath, Bijapur</div>
+          <div className="back-line">
+            <span className="back-line-label">Date</span>
+            {dateLabel} — {nightName}
+          </div>
+          <div className="back-line">
+            <span className="back-line-label">Time</span>
+            5:00 PM – 10:00 PM
+          </div>
+
+          <div className="venue-art">{theme === 'dj' ? '🎧' : theme === 'kids' ? '🎪' : '🏛️'}</div>
+
+          {/* Same venue-card pattern as the Landing page and /book: pin,
+              VENUE label, name, subtitle, QR - kept as one standard
+              instead of the plain text line + separate decorative block
+              this used to be split across. */}
+          <div className="back-venue-card">
+            <span className="back-venue-pin">⌖</span>
+            <div className="back-venue-copy">
+              <small>Venue</small>
+              <strong>{VENUE_NAME}</strong>
+              <span>Vijayapura · Scan for directions</span>
+            </div>
+            <a
+              href={VENUE_MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="venue-mini-qr"
+              aria-label={`Open ${VENUE_NAME} in Google Maps`}
+            >
+              <img src={venueQr} alt="" />
+            </a>
+          </div>
 
           <div className="back-divider" />
           <div className="back-heading">Important</div>
@@ -168,16 +203,8 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
           <div className="back-line">▸ Please arrive 30 minutes before the event.</div>
           <div className="back-line">▸ No re-entry once you exit.</div>
 
-          <div className="venue-art">{theme === 'dj' ? '🎧' : theme === 'kids' ? '🎪' : '🏛️'}</div>
-          <div className="venue-name">TAMRA</div>
-          <div className="venue-address">
-            SHANGRI-LA RAJPATH
-            <br />
-            Rajpath, Bijapur - 110001
-          </div>
-
           <div className="back-footer">
-            RAAS DANDYA · 2026
+            RAAS GARBHA X DANDIYA 2.0
             <br />
             Present this ticket at the entrance
           </div>

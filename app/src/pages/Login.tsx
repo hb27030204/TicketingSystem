@@ -124,7 +124,7 @@ export function Login() {
     <div className="rd-page flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <p className="mb-2 text-center text-xs font-semibold uppercase tracking-[3px]" style={{ color: 'var(--rd-gold)' }}>
-          Raas Dandya
+          Raas Garbha X Dandiya 2.0
         </p>
         <h1 className="rd-heading mb-1 text-center text-2xl" style={{ color: 'var(--rd-text)' }}>
           {titles[step]}

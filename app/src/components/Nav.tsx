@@ -15,9 +15,9 @@ export function Nav({ hideBookCta = false }: NavProps) {
   const onBookingPage = location.pathname === '/book'
 
   return (
-    <nav className="rd-nav">
+    <nav className={`rd-nav${onBookingPage ? '' : ' rd-nav-sticky'}`}>
       <Link to="/" className="rd-nav-brand">
-        RAAS <span>DANDYA</span>
+        RAAS GARBHA <span>X DANDIYA 2.0</span>
       </Link>
       <div className="rd-nav-actions">
         {!onBookingPage && !hideBookCta && (
