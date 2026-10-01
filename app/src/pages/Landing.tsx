@@ -1,9 +1,11 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 import dandiyaEnergyImage from '../assets/DandiyaEnergy.jpg'
 import heroImage from '../assets/landing-hero.jpg'
-import raasDandiyaLogo from '../assets/RaasDandiyaLogo.png'
+import heroVideo from '../assets/landingpagevideo.mp4'
 import theRaasCrowdImage from '../assets/TheRaasCrowd.jpg'
+import venueFeatureVideo from '../assets/venuefeaturevideo.mp4'
 import venueQr from '../assets/venue-location-qr.png'
 import { Footer } from '../components/Footer'
 import { Nav } from '../components/Nav'
@@ -35,15 +37,15 @@ const GALLERY = [
     img: dandiyaEnergyImage,
     alt: 'Dandiya night celebration',
   },
-  // {
-  //   n: '03',
-  //   title: 'Celebrity Moments',
-  //   sub: 'Festival nights · Big energy',
-  //   img: 'https://filmfare.wwmindia.com/content/2024/oct/rajkummarraoandtriptiidimri11728199224.jpg',
-  //   alt: 'Celebrity Navratri celebration',
-  // },
   {
     n: '02',
+    title: 'Celebrity Moments',
+    sub: 'Festival nights · Big energy',
+    img: 'https://filmfare.wwmindia.com/content/2024/oct/rajkummarraoandtriptiidimri11728199224.jpg',
+    alt: 'Celebrity Navratri celebration',
+  },
+  {
+    n: '03',
     title: 'The RAAS Crowd',
     sub: 'Dress up · Show up · Dance',
     img: theRaasCrowdImage,
@@ -52,7 +54,7 @@ const GALLERY = [
 ]
 
 function PulseRibbon({ reverse = false }: { reverse?: boolean }) {
-  const items = ['✦ RAAS GARBHA X DANDIYA 2.0', 'BIJAPUR LET’S DANDIYA', '✦ 17 OCT RAAS GARBHA', '18 OCT DANDIYA 2.0', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
+  const items = ['✦ RAAS GARBHA X DANDIYA 2.0', 'BIJAPUR LET’S DANDIYA', '✦ 16 OCT RAAS GARBHA', '17 OCT DANDIYA 2.0', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
   const doubled = [...items, ...items]
   return (
     <section className={`ld-pulse${reverse ? ' ld-pulse-reverse' : ''}`} aria-hidden="true">
@@ -79,6 +81,31 @@ function BrandMarqueeSet({ hidden = false }: { hidden?: boolean }) {
 }
 
 export function Landing() {
+  const venueVideoRef = useRef<HTMLVideoElement>(null)
+
+  // Below the fold on load, so the autoplay attribute alone doesn't
+  // reliably start it (confirmed live: it just sits paused at frame 0
+  // until something scrolls it into view or calls .play() directly) -
+  // unlike the hero video, which is already on-screen at mount. Starts
+  // it the moment it's actually visible instead, and pauses it again
+  // off-screen rather than burning battery scrolled away.
+  useEffect(() => {
+    const el = venueVideoRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.play().catch(() => {})
+        } else {
+          el.pause()
+        }
+      },
+      { threshold: 0.25 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <div className="rd-page ld-page">
       <div className="ld-ambient" aria-hidden="true">
@@ -93,13 +120,22 @@ export function Landing() {
         <div className="ld-hero-stage">
           <div className="ld-hero-live-chip">
             <i />
-            17–18 OCT · BIJAPUR
+            16–17 OCT · BIJAPUR
           </div>
           <div className="ld-hero-spark ld-hero-spark-1">✦</div>
           <div className="ld-hero-spark ld-hero-spark-2">✦</div>
           <div className="ld-hero-spark ld-hero-spark-3">✦</div>
 
-          <img className="ld-hero-image" src={heroImage} alt="RAAS Garbha festival celebration" />
+          <video
+            className="ld-hero-image"
+            src={heroVideo}
+            poster={heroImage}
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-label="RAAS Garbha festival celebration"
+          />
 
           <div className="ld-hero-sparkles" aria-hidden="true">
             <b /><b /><b /><b /><b /><b />
@@ -107,11 +143,11 @@ export function Landing() {
 
           <div className="ld-hero-dates">
             <div className="ld-hero-date-card">
-              <small>17 October</small>
+              <small>16 October</small>
               <strong>RAAS GARBHA</strong>
             </div>
             <div className="ld-hero-date-card">
-              <small>18 October</small>
+              <small>17 October</small>
               <strong>DANDIYA 2.0</strong>
             </div>
           </div>
@@ -124,8 +160,8 @@ export function Landing() {
             </h1>
             <p>Music · Dandiya · DJ · Energy · Together</p>
             <div className="ld-hero-meta">
-              <div>17 Oct · Raas Garbha</div>
-              <div>18 Oct · Dandiya 2.0</div>
+              <div>16 Oct · Raas Garbha</div>
+              <div>17 Oct · Dandiya 2.0</div>
               <div>{VENUE_NAME}</div>
             </div>
             <Link to="/book" className="ld-hero-cta">
@@ -138,8 +174,8 @@ export function Landing() {
               {Array.from({ length: 2 }).map((_, i) => (
                 <span key={i}>
                   <span>RAAS GARBHA X DANDIYA 2.0</span>
-                  <span>17 OCT · RAAS GARBHA</span>
-                  <span>18 OCT · DANDIYA 2.0</span>
+                  <span>16 OCT · RAAS GARBHA</span>
+                  <span>17 OCT · DANDIYA 2.0</span>
                   <span>{VENUE_NAME.toUpperCase()}</span>
                 </span>
               ))}
@@ -200,7 +236,7 @@ export function Landing() {
               <em>Bijapur.</em>
             </h2>
             <p className="ld-venue-lead">
-              RAAS GARBHA X DANDIYA 2.0 is bringing two nights of music, colour and celebration to <strong>Bijapur.</strong>
+              RAAS GARBHA X DANDIYA 2.0 is bringing two nights of music and celebration to <strong>Bijapur.</strong>
             </p>
             <div className="ld-venue-location-card">
               <div className="ld-venue-pin">⌖</div>
@@ -220,21 +256,26 @@ export function Landing() {
               </a>
             </div>
             <div className="ld-venue-facts">
-              <span><b>17 OCT</b>RAAS GARBHA</span>
-              <span><b>18 OCT</b>DANDIYA 2.0</span>
+              <span><b>16 OCT</b>RAAS GARBHA</span>
+              <span><b>17 OCT</b>DANDIYA 2.0</span>
               <span><b>5 PM+</b>DOORS OPEN</span>
             </div>
           </div>
           <div className="ld-venue-art-card">
+            <video
+              ref={venueVideoRef}
+              className="ld-venue-art-video"
+              src={venueFeatureVideo}
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
+            />
             <div className="ld-venue-art-top">
-              <span>RAAS GARBHA X DANDIYA 2.0</span>
-              {/* <b>BIJAPUR</b> */}
+              <span>{VENUE_NAME}</span>
             </div>
-            <img className="ld-venue-monogram" src={raasDandiyaLogo} alt="Raas Garbha X Dandiya 2.0 emblem" />
-            <div className="ld-venue-ring ld-ring-a" />
-            <div className="ld-venue-ring ld-ring-b" />
             <div className="ld-venue-art-bottom">
-              <strong>BIJAPUR</strong>
+              <strong>VIJAYAPURA</strong>
               <span>THE VENUE · THE NIGHT · THE ENERGY</span>
             </div>
           </div>

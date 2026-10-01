@@ -346,7 +346,7 @@
 
 /* Vibe / gallery section */
 .ld-vibe { background: radial-gradient(circle at 15% 35%, rgba(126, 20, 38, 0.18), transparent 28%), radial-gradient(circle at 88% 18%, rgba(215, 173, 82, 0.1), transparent 24%); }
-.ld-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
+.ld-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: stretch; }
 .ld-face-card {
   position: relative;
   min-width: 0;
@@ -408,30 +408,40 @@
   align-items: center;
   justify-content: center;
 }
-.ld-venue-art-card::before { content: ''; position: absolute; inset: 18px; border: 1px solid rgba(246, 220, 149, 0.18); border-radius: 27px; }
+.ld-venue-art-video {
+  position: absolute;
+  inset: 18px;
+  width: calc(100% - 36px);
+  height: calc(100% - 36px);
+  object-fit: cover;
+  border-radius: 27px;
+  z-index: 1;
+}
+/* Gradient wash over the video so the top/bottom overlay text (and the
+   decorative inner border) stay legible regardless of what's playing
+   underneath - same idea as the hero video's own overlay. */
+.ld-venue-art-card::after {
+  content: '';
+  position: absolute;
+  inset: 18px;
+  border-radius: 27px;
+  background: linear-gradient(180deg, rgba(7, 5, 7, 0.75) 0%, transparent 30%, transparent 68%, rgba(7, 5, 7, 0.8) 100%);
+  z-index: 2;
+}
+.ld-venue-art-card::before { content: ''; position: absolute; inset: 18px; border: 1px solid rgba(246, 220, 149, 0.18); border-radius: 27px; z-index: 3; }
 .ld-venue-art-top, .ld-venue-art-bottom {
   position: absolute;
   left: 28px;
   right: 28px;
   display: flex;
   justify-content: space-between;
-  z-index: 3;
+  z-index: 4;
 }
 .ld-venue-art-top { top: 26px; color: #c7b7a4; font-size: 8px; font-weight: 900; letter-spacing: 2.5px; }
 .ld-venue-art-top b { color: var(--rd-gold-2); }
 .ld-venue-art-bottom { bottom: 28px; align-items: flex-end; }
 .ld-venue-art-bottom strong { font-family: 'Playfair Display', serif; font-size: 32px; color: #fff; }
 .ld-venue-art-bottom span { font-size: 7px; color: #9b9094; letter-spacing: 2px; font-weight: 900; text-align: right; }
-.ld-venue-monogram {
-  width: 190px;
-  height: 190px;
-  object-fit: contain;
-  filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.45));
-}
-.ld-venue-ring { position: absolute; border: 1px dashed rgba(246, 220, 149, 0.16); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%); animation: ldVenueSpin 24s linear infinite; }
-.ld-ring-a { width: 260px; height: 260px; }
-.ld-ring-b { width: 380px; height: 380px; animation-direction: reverse; animation-duration: 34s; }
-@keyframes ldVenueSpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
 /* Festival pulse ribbons */
 .ld-pulse {
@@ -478,6 +488,7 @@
 .ld-brand-wall-note i { color: var(--rd-gold-2); font-style: normal; }
 
 @media (max-width: 900px) {
+  .ld-gallery { grid-template-columns: 1fr 1fr; }
   .ld-face-image { height: 220px; }
   .ld-venue-grid { grid-template-columns: 1fr; gap: 34px; }
   .ld-venue-art-card { height: 360px; }
@@ -498,7 +509,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ld-hero-image, .ld-hero-marquee-track, .ld-brand-track, .ld-pulse-track, .ld-ambient span, .ld-hero-sparkles b, .ld-hero-spark, .ld-hero-live-chip i, .ld-venue-ring {
+  .ld-hero-image, .ld-hero-marquee-track, .ld-brand-track, .ld-pulse-track, .ld-ambient span, .ld-hero-sparkles b, .ld-hero-spark, .ld-hero-live-chip i {
     animation: none !important;
   }
 }

@@ -45,8 +45,26 @@ export async function requireStaffSession(
     throw new Error('Staff session expired. Please sign in again.')
   }
 
+  // Sliding the expiry forward is pure housekeeping - nothing in the
+  // response depends on it, so it shouldn't block every single
+  // staff-authenticated request on an extra DB round trip. waitUntil
+  // (Supabase's Deno runtime global) lets it finish after the response
+  // is already sent, instead of either blocking or risking the isolate
+  // freezing mid-write the way a bare un-awaited call would. Falls back
+  // to awaiting when running somewhere that global isn't present (e.g.
+  // local type-checking).
   const newExpiry = new Date(Date.now() + STAFF_SESSION_HOURS * 60 * 60 * 1000).toISOString()
-  await admin.from('staff_sessions').update({ expires_at: newExpiry }).eq('token', sessionToken)
+  // Supabase's query builder is thenable (awaitable) but isn't an actual
+  // Promise instance, so it needs wrapping to satisfy waitUntil's signature.
+  const expiryUpdate = Promise.resolve(
+    admin.from('staff_sessions').update({ expires_at: newExpiry }).eq('token', sessionToken),
+  )
+  const waitUntil = (globalThis as { EdgeRuntime?: { waitUntil(p: Promise<unknown>): void } }).EdgeRuntime?.waitUntil
+  if (waitUntil) {
+    waitUntil(expiryUpdate)
+  } else {
+    await expiryUpdate
+  }
 
   return {
     staffCodeId: session.staff_code_id,

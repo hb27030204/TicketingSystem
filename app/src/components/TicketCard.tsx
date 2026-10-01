@@ -5,8 +5,8 @@ import type { MyTicket, TicketType } from '../types/db'
 type Theme = 'garba' | 'dj' | 'kids'
 
 const NIGHT_NAMES: Record<string, string> = {
-  '2026-10-17': 'Raas Garbha',
-  '2026-10-18': 'Dandiya 2.0',
+  '2026-10-16': 'Raas Garbha',
+  '2026-10-17': 'Dandiya 2.0',
 }
 
 function isKids(ticketType: TicketType): boolean {
@@ -15,11 +15,12 @@ function isKids(ticketType: TicketType): boolean {
 
 // Old code picked a theme per rendered date instance; a MyTicket here is
 // one row per order (which can cover multiple dates), so this collapses
-// to: kids tickets always get the kids theme, a single 18th-only ticket
-// gets the DJ theme, everything else (17th-only or multi-day) is garba.
+// to: kids tickets always get the kids theme, a single 17th-only ticket
+// (Dandiya 2.0) gets the DJ theme, everything else (16th-only or
+// multi-day) is garba.
 function getTheme(ticketType: TicketType, eventDates: string[]): Theme {
   if (isKids(ticketType)) return 'kids'
-  if (eventDates.length === 1 && eventDates[0] === '2026-10-18') return 'dj'
+  if (eventDates.length === 1 && eventDates[0] === '2026-10-17') return 'dj'
   return 'garba'
 }
 

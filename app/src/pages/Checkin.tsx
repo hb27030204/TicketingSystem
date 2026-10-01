@@ -1,17 +1,96 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { StaffHeader } from '../components/StaffHeader'
 import { StaffLoginForm } from '../components/StaffLoginForm'
 import { useStaffSession } from '../hooks/useStaffSession'
 import { getTicketForCheckin, performCheckin, type TicketForCheckin } from '../lib/staffApi'
 
-function CheckinPanel({ token }: { token: string }) {
+// How long the "checked in" confirmation stays up before auto-advancing
+// to the ready-to-scan screen - long enough to read the guest name and
+// remaining count, short enough not to slow down a fast-moving door line.
+const SUCCESS_AUTO_ADVANCE_MS = 2500
+
+function ReadyToScan() {
+  const { staff, logout } = useStaffSession()
+  if (!staff) return null
+
+  return (
+    <div className="rd-page">
+      <StaffHeader staffName={staff.staffName} isAdmin={staff.isAdmin} onLogout={logout} />
+      <div className="mx-auto flex max-w-sm flex-col items-center px-6 py-24 text-center">
+        <div
+          className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border text-2xl"
+          style={{ borderColor: 'var(--rd-line)', color: 'var(--rd-gold-2)' }}
+        >
+          ⌖
+        </div>
+        <h1 className="rd-heading mb-2 text-xl" style={{ color: 'var(--rd-text)' }}>
+          Ready to scan
+        </h1>
+        <p className="text-sm" style={{ color: 'var(--rd-muted)' }}>
+          Scan the next guest&rsquo;s ticket QR to check them in.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function CheckinSuccess({
+  guestName,
+  message,
+  onScanNext,
+}: {
+  guestName: string
+  message: string
+  onScanNext: () => void
+}) {
+  const { staff, logout } = useStaffSession()
+
+  useEffect(() => {
+    const timer = setTimeout(onScanNext, SUCCESS_AUTO_ADVANCE_MS)
+    return () => clearTimeout(timer)
+  }, [onScanNext])
+
+  if (!staff) return null
+
+  return (
+    <div className="rd-page">
+      <StaffHeader staffName={staff.staffName} isAdmin={staff.isAdmin} onLogout={logout} />
+      <div className="mx-auto flex max-w-sm flex-col items-center px-6 py-20 text-center">
+        <div
+          className="mb-5 flex h-16 w-16 items-center justify-center rounded-full text-2xl font-bold"
+          style={{ background: 'var(--rd-green)', color: '#062015' }}
+        >
+          ✓
+        </div>
+        <h1 className="rd-heading mb-1 text-xl" style={{ color: 'var(--rd-text)' }}>
+          Checked in
+        </h1>
+        <p className="mb-1 font-medium" style={{ color: 'var(--rd-text)' }}>
+          {guestName}
+        </p>
+        <p className="mb-8 text-sm" style={{ color: 'var(--rd-muted)' }}>
+          {message}
+        </p>
+        <button
+          type="button"
+          onClick={onScanNext}
+          className="w-full rounded-lg py-3 font-semibold"
+          style={{ background: 'linear-gradient(120deg, var(--rd-gold), var(--rd-gold-2))', color: '#171216' }}
+        >
+          Scan next ticket
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function CheckinPanel({ token, onCheckedIn }: { token: string; onCheckedIn: (guestName: string, message: string) => void }) {
   const { staff, logout } = useStaffSession()
   const [data, setData] = useState<TicketForCheckin | null>(null)
   const [selectedDate, setSelectedDate] = useState('')
   const [quantity, setQuantity] = useState(1)
-  const [status, setStatus] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -42,17 +121,17 @@ function CheckinPanel({ token }: { token: string }) {
   const maxQty = currentDay ? currentDay.remaining : 1
 
   async function handleCheckin() {
-    if (!staff || !selectedDate) return
+    if (!staff || !selectedDate || !data?.ticket) return
     setBusy(true)
-    setStatus('')
     setError('')
     try {
       const result = await performCheckin(staff.sessionToken, token, selectedDate, quantity)
 
       if (result.result === 'VALID') {
-        setStatus(`${quantity} guest(s) checked in. ${result.remaining} remaining for ${selectedDate}.`)
-        await load()
-        setQuantity(1)
+        // Hand off to the success screen instead of re-fetching this same
+        // ticket - the staff member is moving on to the next guest, not
+        // staying on this one.
+        onCheckedIn(data.ticket.name, `${quantity} guest(s) checked in. ${result.remaining} remaining for ${selectedDate}.`)
         return
       }
 
@@ -84,14 +163,6 @@ function CheckinPanel({ token }: { token: string }) {
             style={{ background: 'rgba(232,107,114,0.1)', color: 'var(--rd-red)' }}
           >
             {error}
-          </div>
-        )}
-        {status && (
-          <div
-            className="mb-4 rounded-lg px-4 py-3 text-sm"
-            style={{ background: 'rgba(85,212,138,0.1)', color: 'var(--rd-green)' }}
-          >
-            {status}
           </div>
         )}
 
@@ -186,16 +257,29 @@ function CheckinPanel({ token }: { token: string }) {
 
 export function Checkin() {
   const { staff } = useStaffSession()
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const token = searchParams.get('token') || ''
+  const [justCheckedIn, setJustCheckedIn] = useState<{ guestName: string; message: string } | null>(null)
 
-  if (!token) {
-    return (
-      <div className="rd-page flex min-h-screen items-center justify-center px-6 text-center">
-        <p style={{ color: 'var(--rd-muted)' }}>No ticket QR token was supplied.</p>
-      </div>
-    )
+  function scanNext() {
+    setJustCheckedIn(null)
+    // Clears the token out of the URL so the next camera scan (a fresh
+    // ?token=... link) is what drives the next ticket, not this one.
+    navigate('/checkin', { replace: true })
   }
 
-  return staff ? <CheckinPanel token={token} /> : <StaffLoginForm subtitle="Sign in to check this guest in." />
+  if (!staff) {
+    return <StaffLoginForm subtitle="Sign in to check guests in." />
+  }
+
+  if (justCheckedIn) {
+    return <CheckinSuccess guestName={justCheckedIn.guestName} message={justCheckedIn.message} onScanNext={scanNext} />
+  }
+
+  if (!token) {
+    return <ReadyToScan />
+  }
+
+  return <CheckinPanel token={token} onCheckedIn={(guestName, message) => setJustCheckedIn({ guestName, message })} />
 }

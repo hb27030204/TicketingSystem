@@ -44,7 +44,7 @@ export function Hero() {
             style={{ borderColor: 'var(--rd-line)', background: 'var(--rd-panel)' }}
           >
             <small className="block text-[10px] uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
-              17 October
+              16 October
             </small>
             <strong style={{ color: 'var(--rd-text)' }}>RAAS GARBHA</strong>
           </div>
@@ -53,7 +53,7 @@ export function Hero() {
             style={{ borderColor: 'rgba(142,91,229,0.4)', background: 'var(--rd-panel)' }}
           >
             <small className="block text-[10px] uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
-              18 October
+              17 October
             </small>
             <strong style={{ color: 'var(--rd-purple)' }}>DANDIYA 2.0</strong>
           </div>
