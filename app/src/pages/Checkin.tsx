@@ -105,8 +105,9 @@ function CheckinPanel({ token, onCheckedIn }: { token: string; onCheckedIn: (gue
         return
       }
       setData(result)
-      const firstOpenAllowed = result.ticket.days.find((d) => d.enabled && d.allowed && !d.complete)
-      setSelectedDate(firstOpenAllowed?.eventDate || result.ticket.days[0]?.eventDate || '')
+      const allowedDays = result.ticket.days.filter((d) => d.allowed)
+      const firstOpenAllowed = allowedDays.find((d) => d.enabled && !d.complete)
+      setSelectedDate(firstOpenAllowed?.eventDate || allowedDays[0]?.eventDate || '')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load this ticket.')
     }
@@ -176,42 +177,50 @@ function CheckinPanel({ token, onCheckedIn }: { token: string; onCheckedIn: (gue
             </p>
 
             <div className="mb-4 space-y-2">
-              {data.ticket.days.map((d, i) => (
-                <button
-                  key={d.eventDate}
-                  type="button"
-                  disabled={!d.enabled || !d.allowed || d.complete}
-                  onClick={() => setSelectedDate(d.eventDate)}
-                  className="w-full rounded-lg border px-4 py-3 text-left disabled:opacity-40"
-                  style={
-                    selectedDate === d.eventDate
-                      ? {
-                          borderColor: i === 1 ? 'var(--rd-purple)' : 'var(--rd-gold)',
-                          background: 'rgba(255,255,255,0.05)',
-                        }
-                      : { borderColor: 'var(--rd-line)' }
-                  }
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium" style={{ color: 'var(--rd-text)' }}>
-                      {d.eventDate}
-                    </span>
-                    <span className="text-sm" style={{ color: 'var(--rd-muted)' }}>
-                      {d.checkedIn}/{d.checkedIn + d.remaining} in
-                    </span>
-                  </div>
-                  {!d.enabled && (
-                    <span className="text-xs" style={{ color: 'var(--rd-red)' }}>
-                      Check-in closed
-                    </span>
-                  )}
-                  {d.enabled && d.complete && (
-                    <span className="text-xs" style={{ color: 'var(--rd-muted)' }}>
-                      All guests checked in
-                    </span>
-                  )}
-                </button>
-              ))}
+              {data.ticket.days
+                // Only dates this ticket actually covers - a ticket with
+                // no date-16th coverage has nothing useful to show for
+                // the 16th, disabled or not. Colour is keyed off the
+                // original (unfiltered) index so a ticket valid for the
+                // 17th only still gets the 17th's purple, not gold.
+                .map((d, i) => ({ ...d, colorIndex: i }))
+                .filter((d) => d.allowed)
+                .map((d) => (
+                  <button
+                    key={d.eventDate}
+                    type="button"
+                    disabled={!d.enabled || d.complete}
+                    onClick={() => setSelectedDate(d.eventDate)}
+                    className="w-full rounded-lg border px-4 py-3 text-left disabled:opacity-40"
+                    style={
+                      selectedDate === d.eventDate
+                        ? {
+                            borderColor: d.colorIndex === 1 ? 'var(--rd-purple)' : 'var(--rd-gold)',
+                            background: 'rgba(255,255,255,0.05)',
+                          }
+                        : { borderColor: 'var(--rd-line)' }
+                    }
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium" style={{ color: 'var(--rd-text)' }}>
+                        {d.eventDate}
+                      </span>
+                      <span className="text-sm" style={{ color: 'var(--rd-muted)' }}>
+                        {d.checkedIn}/{d.checkedIn + d.remaining} in
+                      </span>
+                    </div>
+                    {!d.enabled && (
+                      <span className="text-xs" style={{ color: 'var(--rd-red)' }}>
+                        Check-in closed
+                      </span>
+                    )}
+                    {d.enabled && d.complete && (
+                      <span className="text-xs" style={{ color: 'var(--rd-muted)' }}>
+                        All guests checked in
+                      </span>
+                    )}
+                  </button>
+                ))}
             </div>
 
             {currentDay && currentDay.enabled && !currentDay.complete && (
