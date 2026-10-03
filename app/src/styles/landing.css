@@ -630,7 +630,7 @@
   animation: ldKenBurns 16s ease-in-out infinite alternate;
 }
 .ld-face-card--3 .ld-face-image img { animation-delay: -5s; }
-.ld-face-card--4 .ld-face-image img { animation-delay: -10s; object-position: center 30%; }
+.ld-face-card--4 .ld-face-image img { animation-delay: -10s; }
 @keyframes ldKenBurns {
   from { transform: scale(1.02) translate3d(0, 0, 0); }
   to { transform: scale(1.1) translate3d(-2%, -1%, 0); }
@@ -667,6 +667,37 @@
 /* Narrow tile crops less of the 9:16 video, so zoom further to keep
    YouTube's title bar out of view */
 .ld-face-card--1 .ld-yt-cover iframe { transform: translate(-50%, -50%) scale(1.4); }
+
+/* Slideshow tile: photos stacked, the active one crossfades in */
+.ld-face-image .ld-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.1s ease;
+}
+.ld-face-image .ld-slide.is-active { opacity: 1; }
+
+/* Gold "Free" chip (top-right) for highlight tiles like the dandiya sticks */
+.ld-face-badge {
+  position: absolute;
+  z-index: 4;
+  top: var(--ld-s-3);
+  right: var(--ld-s-3);
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--ld-gold-btn);
+  color: #171216;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 24px rgba(215, 173, 82, 0.4);
+  animation: ldBadgePop 2.6s ease-in-out infinite;
+}
+@keyframes ldBadgePop {
+  0%, 100% { transform: scale(1); box-shadow: 0 8px 24px rgba(215, 173, 82, 0.4); }
+  50% { transform: scale(1.06); box-shadow: 0 10px 32px rgba(215, 173, 82, 0.65); }
+}
 
 /* Caption over the bottom of each tile */
 .ld-face-copy {
@@ -1107,11 +1138,13 @@
   .ld-face-card--3 { grid-column: 2; grid-row: 2; }
   .ld-face-card--4 { grid-column: 1 / 3; grid-row: 3; }
   .ld-face-copy { left: 12px; right: 12px; bottom: 12px; column-gap: 8px; }
-  .ld-face-copy span { width: 28px; height: 28px; font-size: 10px; }
+  /* Tiles are small on phones: drop the number circle so captions get the width */
+  .ld-face-copy { grid-template-columns: 1fr; }
+  .ld-face-copy span { display: none; }
   .ld-face-copy strong { font-size: 17px; }
   .ld-face-copy small { font-size: 11px; }
-  .ld-face-card--2 .ld-face-copy small, .ld-face-card--3 .ld-face-copy small { display: none; }
   .ld-face-live { top: 10px; left: 10px; padding: 6px 10px; font-size: 10px; }
+  .ld-face-badge { top: 10px; right: 10px; padding: 6px 11px; font-size: 10px; }
 
   .ld-venue-art-card { height: 460px; border-radius: 26px; }
   .ld-venue-art-video, .ld-venue-art-card::after, .ld-venue-art-card::before { inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); border-radius: 18px; }
@@ -1130,7 +1163,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ld-hero-poster, .ld-face-image img, .ld-face-live i, .ld-face-card, .ld-brand-card::before,
+  .ld-hero-poster, .ld-face-image img, .ld-face-live i, .ld-face-badge, .ld-face-card, .ld-brand-card::before,
   .ld-hero-stage::before, .ld-hero-cta::before, .ld-eyebrow, .ld-hero-marquee-track, .ld-brand-track, .ld-pulse-track, .ld-ambient span, .ld-hero-sparkles b, .ld-hero-spark, .ld-hero-live-chip i, .ld-reveal-mark, .ld-reveal-label {
     animation: none !important;
   }

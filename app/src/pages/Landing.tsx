@@ -1,6 +1,12 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import dancersBlueSkyImage from '../assets/gallery/dancers-blue-sky.jpg'
+import dancersGroupImage from '../assets/gallery/dancers-group.jpg'
+import dancersSeatedImage from '../assets/gallery/dancers-seated.jpg'
+import dancersSkirtsImage from '../assets/gallery/dancers-skirts.jpg'
 import dandiyaEnergyImage from '../assets/DandiyaEnergy.jpg'
+import dandiyaSticksImage from '../assets/gallery/dandiya-sticks.webp'
 import nandiLogo from '../assets/brands/nandi.png'
 import clickitUpLogo from '../assets/brands/clickitup.jpeg'
 import dProductionLogo from '../assets/brands/dproduction.png'
@@ -10,7 +16,6 @@ import sbgLogo from '../assets/brands/sbg.jpeg'
 import wowLogo from '../assets/brands/wow.jpeg'
 import celebrityImage from '../assets/celebrity.jpeg'
 import heroImage from '../assets/landing-hero.jpg'
-import theRaasCrowdImage from '../assets/TheRaasCrowd.jpg'
 import venueQr from '../assets/venue-location-qr.png'
 import { Footer } from '../components/Footer'
 import { Nav } from '../components/Nav'
@@ -51,22 +56,42 @@ const VENUE_YT_SRC = ytBackgroundSrc('f8JDApNM-ig')
 // Bento gallery: the first item is the tall video tile, the rest are
 // photos. Grid placement comes from the `ld-face-card--N` classes in
 // landing.css, so reordering here reflows the layout.
-type GalleryItem = { n: string; title: string; sub: string; alt: string } & (
+// `pos` is the object-position used to crop each photo into its tile
+// (keeps faces in frame); `badge` adds a gold chip in the corner.
+// A `slides` tile crossfades through its photos every SLIDE_INTERVAL_MS.
+type GalleryItem = { n: string; title: string; sub: string; alt: string; badge?: string } & (
   | { kind: 'video'; src: string }
-  | { kind: 'image'; img: string }
+  | { kind: 'image'; img: string; pos?: string }
+  | { kind: 'slides'; slides: { img: string; pos?: string }[] }
 )
+
+// How long each photo stays up on a slideshow tile before fading to the next
+const SLIDE_INTERVAL_MS = 3000
 
 const GALLERY: GalleryItem[] = [
   {
     n: '01',
     kind: 'video',
     title: 'Feel the Night',
-    sub: 'Watch · Groove · Repeat',
+    sub: 'Live music · Non-stop Garba',
     src: ytBackgroundSrc('p1DSzg0y0h4'),
     alt: 'Garba dancers celebrating in Vijayapura',
   },
   {
     n: '02',
+    kind: 'slides',
+    title: 'Dress Up, Show Up',
+    sub: 'Colour · Mirror work · Twirls',
+    slides: [
+      { img: dancersBlueSkyImage, pos: 'center 52%' },
+      { img: dancersGroupImage, pos: 'center 50%' },
+      { img: dancersSkirtsImage, pos: 'center 48%' },
+      { img: dancersSeatedImage, pos: 'center 47%' },
+    ],
+    alt: 'Three dancers in traditional chaniya choli at dusk',
+  },
+  {
+    n: '03',
     kind: 'image',
     title: 'Dandiya Energy',
     sub: 'Music · Movement · Crowd',
@@ -74,22 +99,45 @@ const GALLERY: GalleryItem[] = [
     alt: 'Dandiya night celebration',
   },
   {
-    n: '03',
-    kind: 'image',
-    title: 'The RAAS Crowd',
-    sub: 'Dress up · Show up · Dance',
-    img: theRaasCrowdImage,
-    alt: 'Garba dancers in traditional dress',
-  },
-  {
     n: '04',
     kind: 'image',
-    title: 'Festival Faces',
-    sub: 'Colour · Joy · Celebration',
-    img: heroImage,
-    alt: 'Smiling girl in festival colours',
+    title: 'Free Dandiya Sticks',
+    sub: 'Available at the venue',
+    img: dandiyaSticksImage,
+    pos: 'center 45%',
+    alt: 'A pair of decorated dandiya sticks',
+    badge: 'Free',
   },
 ]
+
+// Stacked photos; the active one fades in over the others. Stays on the
+// first photo for visitors who ask for reduced motion.
+function Slideshow({ slides, alt }: { slides: { img: string; pos?: string }[]; alt: string }) {
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    if (slides.length < 2) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const timer = window.setInterval(() => setActive((i) => (i + 1) % slides.length), SLIDE_INTERVAL_MS)
+    return () => window.clearInterval(timer)
+  }, [slides.length])
+
+  return (
+    <>
+      {slides.map((s, i) => (
+        <img
+          key={s.img}
+          className={`ld-slide${i === active ? ' is-active' : ''}`}
+          src={s.img}
+          alt={i === active ? alt : ''}
+          aria-hidden={i === active ? undefined : true}
+          decoding="async"
+          style={s.pos ? { objectPosition: s.pos } : undefined}
+        />
+      ))}
+    </>
+  )
+}
 
 function PulseRibbon({ reverse = false }: { reverse?: boolean }) {
   const items = ['✦ RAAS GARBA X DANDIYA 2.0', 'VIJAYAPURA LET’S DANDIYA', '✦ 16 OCT DANDIYA NIGHT', '17 OCT BOLLYWOOD DJ NIGHT', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
@@ -271,14 +319,21 @@ export function Landing() {
                     loading="lazy"
                     tabIndex={-1}
                   />
+                ) : g.kind === 'slides' ? (
+                  <Slideshow slides={g.slides} alt={g.alt} />
                 ) : (
-                  <img src={g.img} alt={g.alt} loading="lazy" />
+                  <img src={g.img} alt={g.alt} decoding="async" style={g.pos ? { objectPosition: g.pos } : undefined} />
                 )}
               </div>
               {g.kind === 'video' && (
                 <span className="ld-face-live" aria-hidden="true">
                   <i />
                   Now playing
+                </span>
+              )}
+              {g.badge && (
+                <span className="ld-face-badge" aria-hidden="true">
+                  ✦ {g.badge}
                 </span>
               )}
               <div className="ld-face-copy">
