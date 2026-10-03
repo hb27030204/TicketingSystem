@@ -217,46 +217,6 @@ export function Home() {
         </p>
 
         <div
-          className="mb-8 rounded-2xl border p-4 text-left"
-          style={{ borderColor: 'var(--rd-line)', background: 'var(--rd-panel)' }}
-        >
-          <div
-            className="flex items-center justify-between border-b pb-3"
-            style={{ borderColor: 'var(--rd-line)' }}
-          >
-            <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
-              Event Timing
-            </span>
-            <span className="text-sm font-semibold" style={{ color: 'var(--rd-text)' }}>
-              5:00 PM – 10:00 PM
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4 pt-3">
-            <div className="flex-1">
-              <p className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
-                Venue
-              </p>
-              <p className="font-medium" style={{ color: 'var(--rd-text)' }}>
-                {VENUE_NAME}
-              </p>
-              <p className="text-xs" style={{ color: 'var(--rd-muted)' }}>
-                Vijayapura · Scan or Tap the QR for directions
-              </p>
-            </div>
-            <a
-              href={VENUE_MAPS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block flex-shrink-0 rounded-md bg-white p-1"
-              aria-label={`Open ${VENUE_NAME} in Google Maps`}
-            >
-              <img src={venueQr} alt="" width={48} height={48} className="block" />
-            </a>
-          </div>
-        </div>
-
-        <div
           className="rounded-2xl border p-5"
           style={{ borderColor: 'var(--rd-line)', background: 'var(--rd-panel)' }}
         >
@@ -372,6 +332,46 @@ export function Home() {
           <p className="mt-3 text-center text-[11px]" style={{ color: 'var(--rd-muted)' }}>
             Payments are securely processed by Razorpay.
           </p>
+        </div>
+
+        <div
+          className="mt-8 rounded-2xl border p-4 text-left"
+          style={{ borderColor: 'var(--rd-line)', background: 'var(--rd-panel)' }}
+        >
+          <div
+            className="flex items-center justify-between border-b pb-3"
+            style={{ borderColor: 'var(--rd-line)' }}
+          >
+            <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
+              Event Timing
+            </span>
+            <span className="text-sm font-semibold" style={{ color: 'var(--rd-text)' }}>
+              5:00 PM – 10:00 PM
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4 pt-3">
+            <div className="flex-1">
+              <p className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
+                Venue
+              </p>
+              <p className="font-medium" style={{ color: 'var(--rd-text)' }}>
+                {VENUE_NAME}
+              </p>
+              <p className="text-xs" style={{ color: 'var(--rd-muted)' }}>
+                Vijayapura · Scan or Tap the QR for directions
+              </p>
+            </div>
+            <a
+              href={VENUE_MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block flex-shrink-0 rounded-md bg-white p-1"
+              aria-label={`Open ${VENUE_NAME} in Google Maps`}
+            >
+              <img src={venueQr} alt="" width={48} height={48} className="block" />
+            </a>
+          </div>
         </div>
       </main>
 

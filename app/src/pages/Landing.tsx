@@ -1,8 +1,7 @@
-import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 import dandiyaEnergyImage from '../assets/DandiyaEnergy.jpg'
-import brnLogo from '../assets/brands/brn.jpeg'
+import nandiLogo from '../assets/brands/nandi.png'
 import clickitUpLogo from '../assets/brands/clickitup.jpeg'
 import dProductionLogo from '../assets/brands/dproduction.png'
 import ecoDesignLogo from '../assets/brands/ecodesign.jpeg'
@@ -11,9 +10,7 @@ import sbgLogo from '../assets/brands/sbg.jpeg'
 import wowLogo from '../assets/brands/wow.jpeg'
 import celebrityImage from '../assets/celebrity.jpeg'
 import heroImage from '../assets/landing-hero.jpg'
-import heroVideo from '../assets/landingpagevideo.mp4'
 import theRaasCrowdImage from '../assets/TheRaasCrowd.jpg'
-import venueFeatureVideo from '../assets/venuefeaturevideo.mp4'
 import venueQr from '../assets/venue-location-qr.png'
 import { Footer } from '../components/Footer'
 import { Nav } from '../components/Nav'
@@ -24,45 +21,73 @@ import '../styles/landing.css'
 // of these, so the card just shows logo + name - inventing a role tag
 // would be guessing at something real sponsors could reasonably expect
 // to be accurate.
+// `bg` is the logo panel colour on the sponsors wall. The current files
+// are flat JPEGs (not transparent), so each panel matches the logo's own
+// background to make the image edge disappear. Swap in a brand gradient
+// here if a transparent PNG replaces the logo later.
+// Order here is the display order everywhere (brand strip + sponsors wall).
 const BRANDS = [
-  { name: 'Sam Mehendi Art', logo: samLogo },
-  { name: 'SBG Teddy Events', logo: sbgLogo },
-  { name: 'D Production', logo: dProductionLogo },
-  { name: 'WOW - Wardrobe Of Women', logo: wowLogo },
-  { name: 'Eco Design Infra Solutions', logo: ecoDesignLogo },
-  { name: 'clickitUp', logo: clickitUpLogo },
-  { name: 'BRN Group - Nandi Garden & Clubhouse', logo: brnLogo },
+  { name: 'Eco Design Infra Solutions', logo: ecoDesignLogo, bg: '#ffffff' },
+  { name: 'D Production', logo: dProductionLogo, bg: '#000000' },
+  { name: 'Sri Nandi Garden & Clubhouse', logo: nandiLogo, bg: '#f3f4ee' },
+  { name: 'clickitUp', logo: clickitUpLogo, bg: '#ffffff' },
+  { name: 'WOW - Wardrobe Of Women', logo: wowLogo, bg: '#f2eee5' },
+  { name: 'Sam Mehendi Art', logo: samLogo, bg: '#000000' },
+  { name: 'SBG Teddy Events', logo: sbgLogo, bg: '#010005' },
 ]
 
-const GALLERY = [
-  // {
-  //   n: '01',
-  //   title: 'Festival Faces',
-  //   sub: 'Colour · Dance · Star energy',
-  //   img: 'https://static.toiimg.com/thumb/124702161.jpg?imgsize=23456&photoid=124702161&resizemode=4&width=900',
-  //   alt: 'Garba festival performance',
-  //   main: true,
-  // },
+// Background-style YouTube embeds: muted + looped (loop needs
+// playlist=<same id>), controls/branding off. pointer-events are
+// disabled in CSS so they behave like background video, not a player.
+function ytBackgroundSrc(id: string) {
+  return (
+    `https://www.youtube-nocookie.com/embed/${id}` +
+    `?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&playsinline=1` +
+    `&rel=0&modestbranding=1&disablekb=1&iv_load_policy=3&fs=0`
+  )
+}
+const VENUE_YT_SRC = ytBackgroundSrc('f8JDApNM-ig')
+
+// Bento gallery: the first item is the tall video tile, the rest are
+// photos. Grid placement comes from the `ld-face-card--N` classes in
+// landing.css, so reordering here reflows the layout.
+type GalleryItem = { n: string; title: string; sub: string; alt: string } & (
+  | { kind: 'video'; src: string }
+  | { kind: 'image'; img: string }
+)
+
+const GALLERY: GalleryItem[] = [
   {
     n: '01',
+    kind: 'video',
+    title: 'Feel the Night',
+    sub: 'Watch · Groove · Repeat',
+    src: ytBackgroundSrc('p1DSzg0y0h4'),
+    alt: 'Garba dancers celebrating in Vijayapura',
+  },
+  {
+    n: '02',
+    kind: 'image',
     title: 'Dandiya Energy',
     sub: 'Music · Movement · Crowd',
     img: dandiyaEnergyImage,
     alt: 'Dandiya night celebration',
   },
-  // {
-  //   n: '02',
-  //   title: 'Celebrity Moments',
-  //   sub: 'Festival nights · Big energy',
-  //   img: 'https://filmfare.wwmindia.com/content/2024/oct/rajkummarraoandtriptiidimri11728199224.jpg',
-  //   alt: 'Celebrity Navratri celebration',
-  // },
   {
-    n: '02',
+    n: '03',
+    kind: 'image',
     title: 'The RAAS Crowd',
     sub: 'Dress up · Show up · Dance',
     img: theRaasCrowdImage,
     alt: 'Garba dancers in traditional dress',
+  },
+  {
+    n: '04',
+    kind: 'image',
+    title: 'Festival Faces',
+    sub: 'Colour · Joy · Celebration',
+    img: heroImage,
+    alt: 'Smiling girl in festival colours',
   },
 ]
 
@@ -85,7 +110,7 @@ function BrandMarqueeSet({ hidden = false }: { hidden?: boolean }) {
     <div className="ld-brand-set" aria-hidden={hidden || undefined}>
       {BRANDS.map((b) => (
         <span className="ld-brand-item" key={b.name}>
-          <span className="ld-brand-logo-badge">
+          <span className="ld-brand-logo-badge" style={{ background: b.bg }}>
             <img src={b.logo} alt={hidden ? '' : b.name} loading="lazy" />
           </span>
           <b>{b.name}</b>
@@ -95,65 +120,7 @@ function BrandMarqueeSet({ hidden = false }: { hidden?: boolean }) {
   )
 }
 
-// Mobile browsers (especially iOS Safari under Low Power Mode or a
-// metered-connection data saver) sometimes reject the initial .play()
-// call even on a muted/playsInline video. Retrying once on the next
-// user interaction recovers from that instead of leaving the video
-// stuck on its poster frame for the rest of the visit.
-function playWhenAllowed(el: HTMLVideoElement) {
-  const tryPlay = () => el.play().catch(() => {})
-  tryPlay()
-
-  const events = ['touchstart', 'pointerdown', 'scroll'] as const
-  const retry = () => {
-    tryPlay()
-    events.forEach((event) => window.removeEventListener(event, retry))
-  }
-  events.forEach((event) => window.addEventListener(event, retry, { once: true, passive: true }))
-
-  return () => events.forEach((event) => window.removeEventListener(event, retry))
-}
-
 export function Landing() {
-  const heroVideoRef = useRef<HTMLVideoElement>(null)
-  const venueVideoRef = useRef<HTMLVideoElement>(null)
-
-  // autoPlay alone isn't reliable on mobile, so give it the same
-  // retry-on-interaction fallback as the venue video below.
-  useEffect(() => {
-    const el = heroVideoRef.current
-    if (!el) return
-    return playWhenAllowed(el)
-  }, [])
-
-  // Below the fold on load, so the autoplay attribute alone doesn't
-  // reliably start it (confirmed live: it just sits paused at frame 0
-  // until something scrolls it into view or calls .play() directly) -
-  // unlike the hero video, which is already on-screen at mount. Starts
-  // it the moment it's actually visible instead, and pauses it again
-  // off-screen rather than burning battery scrolled away.
-  useEffect(() => {
-    const el = venueVideoRef.current
-    if (!el) return
-    let cancelRetry: (() => void) | undefined
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          cancelRetry = playWhenAllowed(el)
-        } else {
-          cancelRetry?.()
-          el.pause()
-        }
-      },
-      { threshold: 0.25 },
-    )
-    observer.observe(el)
-    return () => {
-      cancelRetry?.()
-      observer.disconnect()
-    }
-  }, [])
-
   return (
     <div className="rd-page ld-page">
       <div className="ld-ambient" aria-hidden="true">
@@ -174,18 +141,7 @@ export function Landing() {
           <div className="ld-hero-spark ld-hero-spark-2">✦</div>
           <div className="ld-hero-spark ld-hero-spark-3">✦</div>
 
-          <video
-            ref={heroVideoRef}
-            className="ld-hero-image"
-            src={heroVideo}
-            poster={heroImage}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-label="RAAS Garba festival celebration"
-          />
+          <img className="ld-hero-poster" src={heroImage} alt="RAAS Garba festival celebration" />
 
           <div className="ld-hero-sparkles" aria-hidden="true">
             <b /><b /><b /><b /><b /><b />
@@ -204,24 +160,24 @@ export function Landing() {
 
           <div className="ld-hero-content">
             <span className="ld-eyebrow">{VENUE_NAME} presents</span>
-            <h1>
-              The Biggest <br/> Garba Event
-              <span>in Vijayapura</span>
-            </h1>
+            <h1>Vijayapura&rsquo;s Biggest Garba Event</h1>
             <div className="ld-hero-collab">
               <p className="ld-hero-collab-label">In collaboration with</p>
               <p className="ld-hero-collab-brand">
                 RAAS GARBA <b>X</b> DANDIYA 2.0
               </p>
             </div>
-            <div className="ld-hero-credits">
-              <div>
-                <small>Managed by</small>
-                <span>D Productions &amp; Ketan Dhumal</span>
-              </div>
-              <div>
-                <small>Organised by</small>
-                <span>Akshata Nayak &amp; Chinmayi</span>
+            {/* Glass credits strip: organisers first, then management */}
+            <div className="ld-hero-info">
+              <div className="ld-hero-credits">
+                <div>
+                  <small>Organised by</small>
+                  <span>Akshata Nayak &amp; Chinmayi</span>
+                </div>
+                <div>
+                  <small>Managed by</small>
+                  <span>D Productions &amp; Ketan Dhumale</span>
+                </div>
               </div>
             </div>
             <Link to="/book" className="ld-hero-cta">
@@ -303,11 +259,28 @@ export function Landing() {
           <p>RAAS GARBA X DANDIYA 2.0 is built to feel less like an event you attend and more like a night you remember.</p>
         </div>
         <div className="ld-gallery">
-          {GALLERY.map((g) => (
-            <article className="ld-face-card" key={g.n}>
-              <div className="ld-face-image">
-                <img src={g.img} alt={g.alt} loading="lazy" />
+          {GALLERY.map((g, i) => (
+            <article className={`ld-face-card ld-face-card--${i + 1}`} key={g.n}>
+              <div className={`ld-face-image${g.kind === 'video' ? ' ld-yt-cover' : ''}`}>
+                {g.kind === 'video' ? (
+                  <iframe
+                    src={g.src}
+                    title={g.alt}
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    loading="lazy"
+                    tabIndex={-1}
+                  />
+                ) : (
+                  <img src={g.img} alt={g.alt} loading="lazy" />
+                )}
               </div>
+              {g.kind === 'video' && (
+                <span className="ld-face-live" aria-hidden="true">
+                  <i />
+                  Now playing
+                </span>
+              )}
               <div className="ld-face-copy">
                 <span>{g.n}</span>
                 <strong>{g.title}</strong>
@@ -360,15 +333,16 @@ export function Landing() {
             </div>
           </div>
           <div className="ld-venue-art-card">
-            <video
-              ref={venueVideoRef}
-              className="ld-venue-art-video"
-              src={venueFeatureVideo}
-              muted
-              loop
-              playsInline
-              aria-hidden="true"
-            />
+            <div className="ld-venue-art-video ld-yt-cover" aria-hidden="true">
+              <iframe
+                src={VENUE_YT_SRC}
+                title={`${VENUE_NAME} venue video`}
+                allow="autoplay; encrypted-media; picture-in-picture"
+                referrerPolicy="strict-origin-when-cross-origin"
+                loading="lazy"
+                tabIndex={-1}
+              />
+            </div>
             <div className="ld-venue-art-top">
               <span>{VENUE_NAME}</span>
             </div>
@@ -384,6 +358,8 @@ export function Landing() {
       <PulseRibbon />
 
       <section className="ld-section ld-partners" id="sponsors">
+        <div className="ld-partners-glow ld-partners-glow-a" aria-hidden="true" />
+        <div className="ld-partners-glow ld-partners-glow-b" aria-hidden="true" />
         <div className="ld-section-head">
           <div>
             <span className="ld-kicker">THE BRANDS · THE CULTURE · THE NIGHT</span>
@@ -393,16 +369,26 @@ export function Landing() {
               <span>brands people love.</span>
             </h2>
           </div>
+          <p>
+            The local names and creators helping bring <strong>RAAS GARBA X DANDIYA 2.0</strong> to life in
+            Vijayapura.
+          </p>
         </div>
         <div className="ld-brand-grid">
           {BRANDS.map((b) => (
             <div className="ld-brand-card" key={b.name}>
-              <div className="ld-brand-logo-wrap">
+              <div className="ld-brand-logo-wrap" style={{ background: b.bg }}>
                 <img src={b.logo} alt={b.name} loading="lazy" />
               </div>
               <strong>{b.name}</strong>
+              <span>FEATURED BRAND</span>
             </div>
           ))}
+        </div>
+        <div className="ld-brand-wall-note" aria-hidden="true">
+          <i>✦</i>
+          <span>THANK YOU TO OUR PARTNERS</span>
+          <i>✦</i>
         </div>
       </section>
 
