@@ -220,11 +220,11 @@ export function Landing() {
               <div className="ld-hero-credits">
                 <div>
                   <small>Organised by</small>
-                  <span>Akshata Nayak &amp; Chinmayi</span>
+                  <span>Akshata Nayak, Chinmayi &amp; Ketan Dhumale</span>
                 </div>
                 <div>
                   <small>Managed by</small>
-                  <span>D Productions &amp; Ketan Dhumale</span>
+                  <span>D Productions</span>
                 </div>
               </div>
             </div>
@@ -241,8 +241,11 @@ export function Landing() {
                   <span>16 OCT · DANDIYA NIGHT</span>
                   <span>17 OCT · BOLLYWOOD DJ NIGHT</span>
                   <span>{VENUE_NAME.toUpperCase()}</span>
+                  <span>DOORS OPEN 5 PM</span>
                   <span>FREE DANDIYA STICKS</span>
                   <span>LIVE MUSIC</span>
+                  <span>FOOD &amp; BEVERAGES AVAILABLE</span>
+                  <span>TRANSPORT FACILITY AVAILABLE</span>
                 </span>
               ))}
             </div>
