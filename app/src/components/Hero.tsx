@@ -21,14 +21,14 @@ export function Hero() {
         </span>
 
         <p className="mb-2 text-xs font-semibold uppercase tracking-[3px]" style={{ color: 'var(--rd-gold)' }}>
-          Raas Garbha X Dandiya 2.0 · By AK
+          Raas Garba X Dandiya 2.0 · By AK
         </p>
 
         <h1
           className="rd-heading text-[13vw] leading-[0.95] tracking-tight sm:text-6xl"
           style={{ color: 'var(--rd-text)' }}
         >
-          Bijapur, Let&rsquo;s Dandiya!
+          Vijayapura, Let&rsquo;s Dandiya!
           <span className="mt-2 block text-lg font-normal sm:text-xl" style={{ color: 'var(--rd-gold-2)' }}>
             Where the city comes to celebrate
           </span>
@@ -46,7 +46,7 @@ export function Hero() {
             <small className="block text-[10px] uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
               16 October
             </small>
-            <strong style={{ color: 'var(--rd-text)' }}>RAAS GARBHA</strong>
+            <strong style={{ color: 'var(--rd-text)' }}>DANDIYA NIGHT</strong>
           </div>
           <div
             className="rounded-xl border px-4 py-3 text-left"
@@ -55,7 +55,7 @@ export function Hero() {
             <small className="block text-[10px] uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
               17 October
             </small>
-            <strong style={{ color: 'var(--rd-purple)' }}>DANDIYA 2.0</strong>
+            <strong style={{ color: 'var(--rd-purple)' }}>BOLLYWOOD DJ NIGHT</strong>
           </div>
         </div>
 

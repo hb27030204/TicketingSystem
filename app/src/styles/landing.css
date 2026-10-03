@@ -1,4 +1,4 @@
-/* Raas Garbha X Dandiya 2.0 public landing page — ported from Old Code/Index.html's
+/* Raas Garba X Dandiya 2.0 public landing page — ported from Old Code/Index.html's
    marketing sections (hero, brand marquee, gallery, venue, sponsors).
    Scoped under .ld- so it can't leak into the booking/account pages,
    which keep their own simpler styling. */
@@ -234,18 +234,36 @@
   text-transform: uppercase;
   box-shadow: 0 14px 34px rgba(215, 173, 82, 0.24);
 }
-.ld-hero-meta { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
-.ld-hero-meta div {
-  border: 1px solid rgba(246, 220, 149, 0.34);
-  background: rgba(10, 7, 9, 0.48);
-  backdrop-filter: blur(8px);
-  padding: 9px 12px;
-  color: #fff4e5;
-  font-size: 10px;
-  letter-spacing: 1.1px;
+.ld-hero-content .ld-hero-collab { margin-top: 20px; }
+.ld-hero-content .ld-hero-collab-label {
+  margin: 0 0 6px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  border-radius: 999px;
+  color: #d9cdbd;
 }
+.ld-hero-content .ld-hero-collab-brand {
+  margin: 0;
+  font-size: clamp(14px, 2.2vw, 19px);
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+}
+.ld-hero-content .ld-hero-collab-brand b { color: var(--rd-gold-2); font-weight: 800; }
+.ld-hero-credits { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-top: 22px; }
+.ld-hero-credits div { text-shadow: 0 3px 18px rgba(0, 0, 0, 0.45); }
+.ld-hero-credits small {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #d9cdbd;
+}
+.ld-hero-credits span { font-size: 13px; font-weight: 600; color: #fff4e5; }
 .ld-hero-marquee {
   position: absolute;
   left: 0;
@@ -324,7 +342,21 @@
   transition: transform 0.25s ease, background 0.25s ease;
 }
 .ld-brand-item:hover { transform: translateY(-3px) scale(1.03); background: rgba(246, 220, 149, 0.08); }
-.ld-brand-item img { width: 28px; height: 28px; object-fit: contain; display: block; filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.14)); }
+/* Same reasoning as .ld-brand-logo-wrap below - a small white badge so
+   each logo's own (mixed) background reads as intentional, not a stray
+   rectangle floating in the pill. */
+.ld-brand-logo-badge {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ld-brand-logo-badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ld-brand-item b { font-size: 11px; letter-spacing: 1px; color: #fff; white-space: nowrap; }
 @keyframes ldBrandRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 
@@ -443,6 +475,38 @@
 .ld-venue-art-bottom strong { font-family: 'Playfair Display', serif; font-size: 32px; color: #fff; }
 .ld-venue-art-bottom span { font-size: 7px; color: #9b9094; letter-spacing: 2px; font-weight: 900; text-align: right; }
 
+/* Celebrity-moments teaser - same card/video treatment as the venue
+   section (.ld-venue is shared on the <section> itself), just with a
+   pulsing "?" mark and glowing label over the blurred photo instead of
+   the venue footage, to read as an intentional reveal-soon tease. */
+.ld-reveal-mark {
+  position: relative;
+  z-index: 2;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(246, 220, 149, 0.45);
+  background: rgba(8, 5, 8, 0.55);
+  backdrop-filter: blur(6px);
+  font-family: 'Playfair Display', serif;
+  font-size: 40px;
+  color: var(--rd-gold-2);
+  text-shadow: 0 0 20px rgba(246, 220, 149, 0.8);
+  animation: ldRevealPulse 2.4s ease-in-out infinite;
+}
+.ld-reveal-label { display: inline-block; animation: ldRevealGlow 2.4s ease-in-out infinite; }
+@keyframes ldRevealPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(246, 220, 149, 0.28); transform: scale(1); }
+  50% { box-shadow: 0 0 0 14px rgba(246, 220, 149, 0); transform: scale(1.05); }
+}
+@keyframes ldRevealGlow {
+  0%, 100% { text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6), 0 0 10px rgba(246, 220, 149, 0.25); }
+  50% { text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6), 0 0 24px rgba(246, 220, 149, 0.8); }
+}
+
 /* Festival pulse ribbons */
 .ld-pulse {
   overflow: hidden;
@@ -465,7 +529,7 @@
     radial-gradient(circle at 90% 65%, rgba(139, 24, 60, 0.2), transparent 30%),
     linear-gradient(180deg, #080609, #160a11 52%, #09070a);
 }
-.ld-brand-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.ld-brand-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .ld-brand-card {
   min-height: 170px;
   border: 1px solid rgba(255, 255, 255, 0.09);
@@ -480,10 +544,24 @@
   transition: transform 0.35s ease, border-color 0.35s ease;
 }
 .ld-brand-card:hover { transform: translateY(-6px); border-color: rgba(246, 220, 149, 0.35); }
-.ld-brand-logo-wrap { width: 100px; height: 56px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
-.ld-brand-logo-wrap img { max-width: 88px; max-height: 46px; width: auto; height: auto; object-fit: contain; }
-.ld-brand-card strong { font-size: 16px; color: #fff; }
-.ld-brand-card span { margin-top: 6px; font-size: 8px; letter-spacing: 2px; color: var(--rd-gold-2); font-weight: 900; }
+/* Real uploaded logos come with their own (mixed dark/light) flat
+   backgrounds rather than transparent PNGs, so each one sits in a
+   white badge instead of floating directly on the dark card - keeps
+   every logo looking equally intentional regardless of its source. */
+.ld-brand-logo-wrap {
+  width: 104px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: #fff;
+  padding: 8px;
+  overflow: hidden;
+}
+.ld-brand-logo-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.ld-brand-card strong { font-size: 14px; line-height: 1.3; color: #fff; }
 .ld-brand-wall-note { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 28px; color: #81767c; font-size: 8px; letter-spacing: 2.5px; font-weight: 900; }
 .ld-brand-wall-note i { color: var(--rd-gold-2); font-style: normal; }
 
@@ -509,7 +587,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ld-hero-image, .ld-hero-marquee-track, .ld-brand-track, .ld-pulse-track, .ld-ambient span, .ld-hero-sparkles b, .ld-hero-spark, .ld-hero-live-chip i {
+  .ld-hero-image, .ld-hero-marquee-track, .ld-brand-track, .ld-pulse-track, .ld-ambient span, .ld-hero-sparkles b, .ld-hero-spark, .ld-hero-live-chip i, .ld-reveal-mark, .ld-reveal-label {
     animation: none !important;
   }
 }

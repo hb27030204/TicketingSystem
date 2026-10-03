@@ -27,6 +27,23 @@ function formatDate(d: string): string {
   })
 }
 
+// Grouped by category (each one's 1-day variant immediately followed by
+// its 2-day variant) instead of sorted by price, which interleaved them
+// - e.g. Stag, Stag - 2 Days, Couple, Couple - 2 Days, rather than
+// Stag, Couple, Stag - 2 Days, Couple - 2 Days.
+const TICKET_CATEGORY_ORDER = ['Kids (5 years below)', 'Stag', 'Couple', 'Group of 5']
+
+function sortTicketTypes(types: TicketType[]): TicketType[] {
+  return [...types].sort((a, b) => {
+    const categoryA = a.label.replace(/ — 2 Days$/, '')
+    const categoryB = b.label.replace(/ — 2 Days$/, '')
+    const rankA = TICKET_CATEGORY_ORDER.indexOf(categoryA)
+    const rankB = TICKET_CATEGORY_ORDER.indexOf(categoryB)
+    if (rankA !== rankB) return rankA - rankB
+    return Number(a.is_multi_day) - Number(b.is_multi_day)
+  })
+}
+
 interface PendingSelection {
   ticketTypeId: string
   eventDate: string
@@ -51,10 +68,10 @@ export function Home() {
       .from('ticket_types')
       .select('*')
       .eq('active', true)
-      .order('price')
       .then(({ data }) => {
-        setTicketTypes(data ?? [])
-        if (data && data.length > 0) setSelectedTypeId(data[0].id)
+        const sorted = sortTicketTypes(data ?? [])
+        setTicketTypes(sorted)
+        if (sorted.length > 0) setSelectedTypeId(sorted[0].id)
       })
 
     supabase
@@ -138,7 +155,7 @@ export function Home() {
         key: RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: 'INR',
-        name: 'Raas Garbha X Dandiya 2.0',
+        name: 'Raas Garba X Dandiya 2.0',
         description: selectedType.label,
         order_id: order.razorpayOrderId,
         prefill: { contact: profilePhone },

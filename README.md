@@ -68,7 +68,7 @@ into `/checkin` when they scan a ticket QR with their phone's camera.
 
 Copy your Key ID and Key Secret into `supabase/functions/.env`
 (`RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`), and the Key ID alone into
-`app/.env.local` (`VITE_RAZORPAY_KEY_ID`) — the secret must never reach
+`app/.env.local` (`RAZORPAY_KEY_ID`) — the secret must never reach
 the frontend.
 
 ### 4. Event configuration

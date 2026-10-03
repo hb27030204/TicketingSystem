@@ -2,6 +2,14 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 import dandiyaEnergyImage from '../assets/DandiyaEnergy.jpg'
+import brnLogo from '../assets/brands/brn.jpeg'
+import clickitUpLogo from '../assets/brands/clickitup.jpeg'
+import dProductionLogo from '../assets/brands/dproduction.png'
+import ecoDesignLogo from '../assets/brands/ecodesign.jpeg'
+import samLogo from '../assets/brands/sam.jpeg'
+import sbgLogo from '../assets/brands/sbg.jpeg'
+import wowLogo from '../assets/brands/wow.jpeg'
+import celebrityImage from '../assets/celebrity.jpeg'
 import heroImage from '../assets/landing-hero.jpg'
 import heroVideo from '../assets/landingpagevideo.mp4'
 import theRaasCrowdImage from '../assets/TheRaasCrowd.jpg'
@@ -12,13 +20,18 @@ import { Nav } from '../components/Nav'
 import { VENUE_MAPS_URL, VENUE_NAME } from '../lib/venue'
 import '../styles/landing.css'
 
+// No confirmed partner "role" (beverage/fashion/etc.) was given for any
+// of these, so the card just shows logo + name - inventing a role tag
+// would be guessing at something real sponsors could reasonably expect
+// to be accurate.
 const BRANDS = [
-  { name: 'Coca-Cola', tag: 'BEVERAGE PARTNER', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Coca-Cola%20logo%20white.png' },
-  { name: 'Spotify', tag: 'MUSIC PARTNER', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Spotify%20New%20Full%20Logo%20RGB%20Green.png' },
-  { name: 'Zomato', tag: 'FOOD PARTNER', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Zomato-logo.png' },
-  { name: 'Myntra', tag: 'FASHION PARTNER', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Myntra%20Logo.png' },
-  { name: 'Swiggy', tag: 'FOOD PARTNER', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Swiggy%20Text%20Logo.png' },
-  { name: 'boAt', tag: 'TECH PARTNER', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Boat-logo.png' },
+  { name: 'Sam Mehendi Art', logo: samLogo },
+  { name: 'SBG Teddy Events', logo: sbgLogo },
+  { name: 'D Production', logo: dProductionLogo },
+  { name: 'WOW - Wardrobe Of Women', logo: wowLogo },
+  { name: 'Eco Design Infra Solutions', logo: ecoDesignLogo },
+  { name: 'clickitUp', logo: clickitUpLogo },
+  { name: 'BRN Group - Nandi Garden & Clubhouse', logo: brnLogo },
 ]
 
 const GALLERY = [
@@ -27,7 +40,7 @@ const GALLERY = [
   //   title: 'Festival Faces',
   //   sub: 'Colour · Dance · Star energy',
   //   img: 'https://static.toiimg.com/thumb/124702161.jpg?imgsize=23456&photoid=124702161&resizemode=4&width=900',
-  //   alt: 'Garbha festival performance',
+  //   alt: 'Garba festival performance',
   //   main: true,
   // },
   {
@@ -37,24 +50,24 @@ const GALLERY = [
     img: dandiyaEnergyImage,
     alt: 'Dandiya night celebration',
   },
+  // {
+  //   n: '02',
+  //   title: 'Celebrity Moments',
+  //   sub: 'Festival nights · Big energy',
+  //   img: 'https://filmfare.wwmindia.com/content/2024/oct/rajkummarraoandtriptiidimri11728199224.jpg',
+  //   alt: 'Celebrity Navratri celebration',
+  // },
   {
     n: '02',
-    title: 'Celebrity Moments',
-    sub: 'Festival nights · Big energy',
-    img: 'https://filmfare.wwmindia.com/content/2024/oct/rajkummarraoandtriptiidimri11728199224.jpg',
-    alt: 'Celebrity Navratri celebration',
-  },
-  {
-    n: '03',
     title: 'The RAAS Crowd',
     sub: 'Dress up · Show up · Dance',
     img: theRaasCrowdImage,
-    alt: 'Garbha dancers in traditional dress',
+    alt: 'Garba dancers in traditional dress',
   },
 ]
 
 function PulseRibbon({ reverse = false }: { reverse?: boolean }) {
-  const items = ['✦ RAAS GARBHA X DANDIYA 2.0', 'BIJAPUR LET’S DANDIYA', '✦ 16 OCT RAAS GARBHA', '17 OCT DANDIYA 2.0', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
+  const items = ['✦ RAAS GARBA X DANDIYA 2.0', 'VIJAYAPURA LET’S DANDIYA', '✦ 16 OCT DANDIYA NIGHT', '17 OCT BOLLYWOOD DJ NIGHT', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
   const doubled = [...items, ...items]
   return (
     <section className={`ld-pulse${reverse ? ' ld-pulse-reverse' : ''}`} aria-hidden="true">
@@ -72,7 +85,9 @@ function BrandMarqueeSet({ hidden = false }: { hidden?: boolean }) {
     <div className="ld-brand-set" aria-hidden={hidden || undefined}>
       {BRANDS.map((b) => (
         <span className="ld-brand-item" key={b.name}>
-          <img src={b.logo} alt={hidden ? '' : b.name} loading="lazy" />
+          <span className="ld-brand-logo-badge">
+            <img src={b.logo} alt={hidden ? '' : b.name} loading="lazy" />
+          </span>
           <b>{b.name}</b>
         </span>
       ))}
@@ -80,8 +95,36 @@ function BrandMarqueeSet({ hidden = false }: { hidden?: boolean }) {
   )
 }
 
+// Mobile browsers (especially iOS Safari under Low Power Mode or a
+// metered-connection data saver) sometimes reject the initial .play()
+// call even on a muted/playsInline video. Retrying once on the next
+// user interaction recovers from that instead of leaving the video
+// stuck on its poster frame for the rest of the visit.
+function playWhenAllowed(el: HTMLVideoElement) {
+  const tryPlay = () => el.play().catch(() => {})
+  tryPlay()
+
+  const events = ['touchstart', 'pointerdown', 'scroll'] as const
+  const retry = () => {
+    tryPlay()
+    events.forEach((event) => window.removeEventListener(event, retry))
+  }
+  events.forEach((event) => window.addEventListener(event, retry, { once: true, passive: true }))
+
+  return () => events.forEach((event) => window.removeEventListener(event, retry))
+}
+
 export function Landing() {
+  const heroVideoRef = useRef<HTMLVideoElement>(null)
   const venueVideoRef = useRef<HTMLVideoElement>(null)
+
+  // autoPlay alone isn't reliable on mobile, so give it the same
+  // retry-on-interaction fallback as the venue video below.
+  useEffect(() => {
+    const el = heroVideoRef.current
+    if (!el) return
+    return playWhenAllowed(el)
+  }, [])
 
   // Below the fold on load, so the autoplay attribute alone doesn't
   // reliably start it (confirmed live: it just sits paused at frame 0
@@ -92,18 +135,23 @@ export function Landing() {
   useEffect(() => {
     const el = venueVideoRef.current
     if (!el) return
+    let cancelRetry: (() => void) | undefined
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.play().catch(() => {})
+          cancelRetry = playWhenAllowed(el)
         } else {
+          cancelRetry?.()
           el.pause()
         }
       },
       { threshold: 0.25 },
     )
     observer.observe(el)
-    return () => observer.disconnect()
+    return () => {
+      cancelRetry?.()
+      observer.disconnect()
+    }
   }, [])
 
   return (
@@ -120,13 +168,14 @@ export function Landing() {
         <div className="ld-hero-stage">
           <div className="ld-hero-live-chip">
             <i />
-            16–17 OCT · BIJAPUR
+            16–17 OCT · VIJAYAPURA
           </div>
           <div className="ld-hero-spark ld-hero-spark-1">✦</div>
           <div className="ld-hero-spark ld-hero-spark-2">✦</div>
           <div className="ld-hero-spark ld-hero-spark-3">✦</div>
 
           <video
+            ref={heroVideoRef}
             className="ld-hero-image"
             src={heroVideo}
             poster={heroImage}
@@ -134,7 +183,8 @@ export function Landing() {
             muted
             loop
             playsInline
-            aria-label="RAAS Garbha festival celebration"
+            preload="auto"
+            aria-label="RAAS Garba festival celebration"
           />
 
           <div className="ld-hero-sparkles" aria-hidden="true">
@@ -144,25 +194,35 @@ export function Landing() {
           <div className="ld-hero-dates">
             <div className="ld-hero-date-card">
               <small>16 October</small>
-              <strong>RAAS GARBHA</strong>
+              <strong>DANDIYA NIGHT</strong>
             </div>
             <div className="ld-hero-date-card">
               <small>17 October</small>
-              <strong>DANDIYA 2.0</strong>
+              <strong>BOLLYWOOD DJ NIGHT</strong>
             </div>
           </div>
 
           <div className="ld-hero-content">
-            <span className="ld-eyebrow">RAAS GARBHA X DANDIYA 2.0 · BY AK</span>
+            <span className="ld-eyebrow">{VENUE_NAME} presents</span>
             <h1>
-              Bijapur, Let&rsquo;s Dandiya!
-              <span>Where the city comes to celebrate</span>
+              The Biggest <br/> Garba Event
+              <span>in Vijayapura</span>
             </h1>
-            <p>Music · Dandiya · DJ · Energy · Together</p>
-            <div className="ld-hero-meta">
-              <div>16 Oct · Raas Garbha</div>
-              <div>17 Oct · Dandiya 2.0</div>
-              <div>{VENUE_NAME}</div>
+            <div className="ld-hero-collab">
+              <p className="ld-hero-collab-label">In collaboration with</p>
+              <p className="ld-hero-collab-brand">
+                RAAS GARBA <b>X</b> DANDIYA 2.0
+              </p>
+            </div>
+            <div className="ld-hero-credits">
+              <div>
+                <small>Managed by</small>
+                <span>D Productions &amp; Ketan Dhumal</span>
+              </div>
+              <div>
+                <small>Organised by</small>
+                <span>Akshata Nayak &amp; Chinmayi</span>
+              </div>
             </div>
             <Link to="/book" className="ld-hero-cta">
               Book a ticket ↗
@@ -173,10 +233,12 @@ export function Landing() {
             <div className="ld-hero-marquee-track">
               {Array.from({ length: 2 }).map((_, i) => (
                 <span key={i}>
-                  <span>RAAS GARBHA X DANDIYA 2.0</span>
-                  <span>16 OCT · RAAS GARBHA</span>
-                  <span>17 OCT · DANDIYA 2.0</span>
+                  <span>RAAS GARBA X DANDIYA 2.0</span>
+                  <span>16 OCT · DANDIYA NIGHT</span>
+                  <span>17 OCT · BOLLYWOOD DJ NIGHT</span>
                   <span>{VENUE_NAME.toUpperCase()}</span>
+                  <span>FREE DANDIYA STICKS</span>
+                  <span>LIVE MUSIC</span>
                 </span>
               ))}
             </div>
@@ -194,6 +256,42 @@ export function Landing() {
         </div>
       </section>
 
+      <section className="ld-section ld-venue ld-celebrity" id="celebrity">
+        <div className="ld-venue-grid">
+          <div>
+            <span className="ld-kicker">SOMETHING BIG IS COMING</span>
+            <div className="ld-venue-title-line">
+              <span>SPECIAL GUEST</span><i>✦</i><span>BIG SURPRISE</span>
+            </div>
+            <h2>
+              Celebrity
+              <br />
+              <em>Moments.</em>
+            </h2>
+            <p className="ld-venue-lead">
+              RAAS GARBA X DANDIYA 2.0 is bringing a surprise guest to the stage this year. Who it is stays under
+              wraps for now — the big reveal is coming soon.
+            </p>
+            <div className="ld-venue-facts">
+              <span><b>✦</b>SURPRISE GUEST</span>
+              <span><b>✦</b>STAY TUNED</span>
+              <span><b>✦</b>ANNOUNCING SOON</span>
+            </div>
+          </div>
+          <div className="ld-venue-art-card">
+            <img className="ld-venue-art-video" src={celebrityImage} alt="A special celebrity guest - reveal coming soon" />
+            <div className="ld-venue-art-top">
+              <span>SPECIAL GUEST</span>
+            </div>
+            <div className="ld-reveal-mark">?</div>
+            <div className="ld-venue-art-bottom">
+              <strong className="ld-reveal-label">REVEALING SOON</strong>
+              <span>STAY TUNED</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="ld-section ld-vibe" id="experience">
         <div className="ld-kicker">THE PEOPLE · THE ENERGY · THE NIGHT</div>
         <div className="ld-section-head">
@@ -202,7 +300,7 @@ export function Landing() {
             <br />
             <span>Stay for the madness.</span>
           </h2>
-          <p>RAAS GARBHA X DANDIYA 2.0 is built to feel less like an event you attend and more like a night you remember.</p>
+          <p>RAAS GARBA X DANDIYA 2.0 is built to feel less like an event you attend and more like a night you remember.</p>
         </div>
         <div className="ld-gallery">
           {GALLERY.map((g) => (
@@ -233,10 +331,10 @@ export function Landing() {
             <h2>
               See you in
               <br />
-              <em>Bijapur.</em>
+              <em>Vijayapura.</em>
             </h2>
             <p className="ld-venue-lead">
-              RAAS GARBHA X DANDIYA 2.0 is bringing two nights of music and celebration to <strong>Bijapur.</strong>
+              RAAS GARBA X DANDIYA 2.0 is bringing two nights of music and celebration to <strong>Vijayapura.</strong>
             </p>
             <div className="ld-venue-location-card">
               <div className="ld-venue-pin">⌖</div>
@@ -256,8 +354,8 @@ export function Landing() {
               </a>
             </div>
             <div className="ld-venue-facts">
-              <span><b>16 OCT</b>RAAS GARBHA</span>
-              <span><b>17 OCT</b>DANDIYA 2.0</span>
+              <span><b>16 OCT</b>DANDIYA NIGHT</span>
+              <span><b>17 OCT</b>BOLLYWOOD DJ NIGHT</span>
               <span><b>5 PM+</b>DOORS OPEN</span>
             </div>
           </div>
@@ -295,10 +393,6 @@ export function Landing() {
               <span>brands people love.</span>
             </h2>
           </div>
-          {/* <p>
-            Our launch brand wall uses popular brand visuals for now. Replace these with your{' '}
-            <strong>confirmed RAAS GARBHA X DANDIYA 2.0 sponsors and collaborators</strong> before going live.
-          </p> */}
         </div>
         <div className="ld-brand-grid">
           {BRANDS.map((b) => (
@@ -307,15 +401,9 @@ export function Landing() {
                 <img src={b.logo} alt={b.name} loading="lazy" />
               </div>
               <strong>{b.name}</strong>
-              <span>{b.tag}</span>
             </div>
           ))}
         </div>
-        {/* <div className="ld-brand-wall-note">
-          <i>✦</i>
-          <span>YOUR CONFIRMED SPONSORS GO HERE</span>
-          <i>✦</i>
-        </div> */}
       </section>
 
       <Footer />

@@ -5,8 +5,8 @@ import type { MyTicket, TicketType } from '../types/db'
 type Theme = 'garba' | 'dj' | 'kids'
 
 const NIGHT_NAMES: Record<string, string> = {
-  '2026-10-16': 'Raas Garbha',
-  '2026-10-17': 'Dandiya 2.0',
+  '2026-10-16': 'Dandiya Night',
+  '2026-10-17': 'Bollywood DJ Night',
 }
 
 function isKids(ticketType: TicketType): boolean {
@@ -16,7 +16,7 @@ function isKids(ticketType: TicketType): boolean {
 // Old code picked a theme per rendered date instance; a MyTicket here is
 // one row per order (which can cover multiple dates), so this collapses
 // to: kids tickets always get the kids theme, a single 17th-only ticket
-// (Dandiya 2.0) gets the DJ theme, everything else (16th-only or
+// (Bollywood DJ Night) gets the DJ theme, everything else (16th-only or
 // multi-day) is garba.
 function getTheme(ticketType: TicketType, eventDates: string[]): Theme {
   if (isKids(ticketType)) return 'kids'
@@ -32,13 +32,11 @@ function getAdmitText(ticketType: TicketType): string {
 }
 
 // Sits directly under the big "RAAS" title (see ticket-title below), so
-// this intentionally drops the "Raas" from the garba night's full name
-// ("Raas Garbha") to avoid reading as "RAAS Raas Garbha" - the full name
-// still appears on its own further down, next to the date.
+// it reads as "RAAS" + the night's name.
 function getScriptText(theme: Theme): string {
-  if (theme === 'kids') return 'Kids Garbha'
-  if (theme === 'dj') return 'Dandiya 2.0'
-  return 'Garbha'
+  if (theme === 'kids') return 'Kids Garba'
+  if (theme === 'dj') return 'Bollywood DJ Night'
+  return 'Dandiya Night'
 }
 
 function formatDateLabel(dates: string[]): string {
@@ -67,7 +65,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
         <div className="ticket-pattern" />
 
         <div className="ticket-top">
-          <div className="ticket-logo">RAAS GARBHA X DANDIYA 2.0 · BY AK</div>
+          <div className="ticket-logo">RAAS GARBA X DANDIYA 2.0 · BY AK</div>
           <div className="ticket-ornament">✦ ✧ ✦</div>
           <h3 className="ticket-title">RAAS</h3>
           <div className="ticket-script">{scriptText}</div>
@@ -147,7 +145,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
         <div className="ticket-pattern" />
 
         <div className="back-inner">
-          <div className="back-logo">RAAS GARBHA X DANDIYA 2.0 · BY AK</div>
+          <div className="back-logo">RAAS GARBA X DANDIYA 2.0 · BY AK</div>
           <div className="back-script">
             {theme === 'kids' ? (
               <>
@@ -205,7 +203,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
           <div className="back-line">▸ No re-entry once you exit.</div>
 
           <div className="back-footer">
-            RAAS GARBHA X DANDIYA 2.0
+            RAAS GARBA X DANDIYA 2.0
             <br />
             Present this ticket at the entrance
           </div>
