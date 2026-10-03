@@ -7,9 +7,9 @@ import dancersSeatedImage from '../assets/gallery/dancers-seated.jpg'
 import dancersSkirtsImage from '../assets/gallery/dancers-skirts.jpg'
 import dandiyaEnergyImage from '../assets/DandiyaEnergy.jpg'
 import dandiyaSticksImage from '../assets/gallery/dandiya-sticks.webp'
-import nandiLogo from '../assets/brands/nandi.png'
+import nandiLogo from '../assets/brands/nandi.jpg'
 import clickitUpLogo from '../assets/brands/clickitup.jpeg'
-import dProductionLogo from '../assets/brands/dproduction.png'
+import dProductionLogo from '../assets/brands/dproduction.jpg'
 import ecoDesignLogo from '../assets/brands/ecodesign.jpeg'
 import samLogo from '../assets/brands/sam.jpeg'
 import sbgLogo from '../assets/brands/sbg.jpeg'
@@ -34,7 +34,7 @@ import '../styles/landing.css'
 const BRANDS = [
   { name: 'Eco Design Infra Solutions', logo: ecoDesignLogo, bg: '#ffffff' },
   { name: 'D Production', logo: dProductionLogo, bg: '#000000' },
-  { name: 'Sri Nandi Garden & Clubhouse', logo: nandiLogo, bg: '#f3f4ee' },
+  { name: 'Sri Nandi Garden & Clubhouse', logo: nandiLogo, bg: '#f1f2ed' },
   { name: 'clickitUp', logo: clickitUpLogo, bg: '#ffffff' },
   { name: 'WOW - Wardrobe Of Women', logo: wowLogo, bg: '#f2eee5' },
   { name: 'Sam Mehendi Art', logo: samLogo, bg: '#000000' },
