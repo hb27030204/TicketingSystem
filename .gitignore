@@ -6,3 +6,4 @@ dist/
 .vercel/
 supabase/.branches/
 supabase/.temp/
+/Offline Tickets/
