@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
+import { AnalyticsTracker } from './components/AnalyticsTracker'
 import { RequireAuth } from './components/RequireAuth'
 import { AuthProvider } from './hooks/useAuth'
 import { StaffSessionProvider } from './hooks/useStaffSession'
@@ -18,6 +19,7 @@ export default function App() {
     <AuthProvider>
       <StaffSessionProvider>
         <BrowserRouter>
+          <AnalyticsTracker />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/book" element={<Home />} />

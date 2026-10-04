@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_RAZORPAY_KEY_ID: string
   readonly VITE_MSG91_WIDGET_ID: string
   readonly VITE_MSG91_WIDGET_TOKEN: string
+  readonly VITE_GA_MEASUREMENT_ID?: string
 }
 
 interface ImportMeta {
