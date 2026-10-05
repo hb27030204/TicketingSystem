@@ -64,6 +64,7 @@ function BookingsTab({ sessionToken }: { sessionToken: string }) {
   const [paymentFilter, setPaymentFilter] = useState('ALL')
   const [ticketTypeFilter, setTicketTypeFilter] = useState('ALL')
   const [dateFilter, setDateFilter] = useState('ALL')
+  const [sourceFilter, setSourceFilter] = useState<'ALL' | 'ONLINE' | 'OFFLINE'>('ALL')
 
   useEffect(() => {
     fetchBookings(sessionToken)
@@ -87,6 +88,8 @@ function BookingsTab({ sessionToken }: { sessionToken: string }) {
       if (paymentFilter !== 'ALL' && b.paymentStatus !== paymentFilter) return false
       if (ticketTypeFilter !== 'ALL' && b.ticketType !== ticketTypeFilter) return false
       if (dateFilter !== 'ALL' && !b.eventDates.includes(dateFilter)) return false
+      if (sourceFilter === 'ONLINE' && b.isOffline) return false
+      if (sourceFilter === 'OFFLINE' && !b.isOffline) return false
       if (!q) return true
       return (
         b.name.toLowerCase().includes(q) ||
@@ -95,7 +98,24 @@ function BookingsTab({ sessionToken }: { sessionToken: string }) {
         b.bookingCode.toLowerCase().includes(q)
       )
     })
-  }, [bookings, search, paymentFilter, ticketTypeFilter, dateFilter])
+  }, [bookings, search, paymentFilter, ticketTypeFilter, dateFilter, sourceFilter])
+
+  const totals = useMemo(() => {
+    const summary = {
+      count: filtered.length,
+      total: 0,
+      paid: 0,
+      pending: 0,
+      failed: 0,
+    }
+    for (const b of filtered) {
+      summary.total += b.amount
+      if (b.paymentStatus === 'PAID') summary.paid += b.amount
+      else if (b.paymentStatus === 'PENDING') summary.pending += b.amount
+      else summary.failed += b.amount
+    }
+    return summary
+  }, [filtered])
 
   const selectStyle = {
     borderColor: 'var(--rd-line)',
@@ -141,79 +161,137 @@ function BookingsTab({ sessionToken }: { sessionToken: string }) {
             </option>
           ))}
         </select>
+        <select
+          value={sourceFilter}
+          onChange={(e) => setSourceFilter(e.target.value as 'ALL' | 'ONLINE' | 'OFFLINE')}
+          className="rounded-lg border px-3 py-2 text-sm"
+          style={selectStyle}
+        >
+          <option value="ALL">Online + Offline</option>
+          <option value="ONLINE">Online tickets only</option>
+          <option value="OFFLINE">Offline tickets only</option>
+        </select>
       </div>
 
       {!bookings && !error && <p style={{ color: 'var(--rd-muted)' }}>Loading bookings…</p>}
 
       {bookings && (
-        <>
-          <p className="mb-2 text-xs" style={{ color: 'var(--rd-muted)' }}>
-            {filtered.length} of {bookings.length} booking(s)
-          </p>
-          <div className="overflow-x-auto rounded-xl border" style={{ borderColor: 'var(--rd-line)' }}>
-            <table className="w-full min-w-[820px] border-collapse text-left text-sm">
-              <thead>
-                <tr style={{ background: 'var(--rd-panel)' }}>
-                  {['Name', 'Email', 'Phone', 'Ticket type', 'Qty', 'Amount', 'Dates', 'Payment', 'Booking code', 'Booked at'].map(
-                    (h) => (
-                      <th key={h} className="border-b px-3 py-2 font-semibold" style={mutedCellStyle}>
-                        {h}
-                      </th>
-                    ),
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+          <div className="min-w-0 flex-1">
+            <p className="mb-2 text-xs" style={{ color: 'var(--rd-muted)' }}>
+              {filtered.length} of {bookings.length} booking(s)
+            </p>
+            <div className="overflow-x-auto rounded-xl border" style={{ borderColor: 'var(--rd-line)' }}>
+              <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+                <thead>
+                  <tr style={{ background: 'var(--rd-panel)' }}>
+                    {['Name', 'Email', 'Phone', 'Source', 'Ticket type', 'Qty', 'Amount', 'Dates', 'Payment', 'Booking code', 'Booked at'].map(
+                      (h) => (
+                        <th key={h} className="border-b px-3 py-2 font-semibold whitespace-nowrap" style={mutedCellStyle}>
+                          {h}
+                        </th>
+                      ),
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((b) => (
+                    <tr key={b.orderId}>
+                      <td className="border-b px-3 py-2" style={cellStyle}>
+                        {b.name}
+                      </td>
+                      <td className="border-b px-3 py-2" style={cellStyle}>
+                        {b.email}
+                      </td>
+                      <td className="border-b px-3 py-2" style={cellStyle}>
+                        {b.phone}
+                      </td>
+                      <td className="border-b px-3 py-2" style={mutedCellStyle}>
+                        <span
+                          className="rounded-full px-2 py-0.5 text-xs font-medium"
+                          style={
+                            b.isOffline
+                              ? { background: 'rgba(215,173,82,0.15)', color: 'var(--rd-gold-2)' }
+                              : { background: 'rgba(255,255,255,0.06)', color: 'var(--rd-muted)' }
+                          }
+                        >
+                          {b.isOffline ? 'Offline' : 'Online'}
+                        </span>
+                      </td>
+                      <td className="border-b px-3 py-2" style={cellStyle}>
+                        {b.ticketType}
+                      </td>
+                      <td className="border-b px-3 py-2" style={cellStyle}>
+                        {b.quantity}
+                      </td>
+                      <td className="border-b px-3 py-2" style={cellStyle}>
+                        ₹{b.amount.toLocaleString('en-IN')}
+                      </td>
+                      <td className="border-b px-3 py-2" style={cellStyle}>
+                        {b.eventDates.join(', ')}
+                      </td>
+                      <td className="border-b px-3 py-2" style={mutedCellStyle}>
+                        <span
+                          className="rounded-full px-2 py-0.5 text-xs font-medium"
+                          style={paymentBadgeStyle[b.paymentStatus]}
+                        >
+                          {b.paymentStatus}
+                        </span>
+                      </td>
+                      <td className="border-b px-3 py-2" style={mutedCellStyle}>
+                        {b.bookingCode}
+                      </td>
+                      <td className="border-b px-3 py-2 whitespace-nowrap" style={{ ...mutedCellStyle, minWidth: '150px' }}>
+                        {formatDateTime(b.createdAt)}
+                      </td>
+                    </tr>
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr>
+                      <td colSpan={11} className="px-3 py-6 text-center" style={mutedCellStyle}>
+                        No bookings match your filters.
+                      </td>
+                    </tr>
                   )}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((b) => (
-                  <tr key={b.orderId}>
-                    <td className="border-b px-3 py-2" style={cellStyle}>
-                      {b.name}
-                    </td>
-                    <td className="border-b px-3 py-2" style={cellStyle}>
-                      {b.email}
-                    </td>
-                    <td className="border-b px-3 py-2" style={cellStyle}>
-                      {b.phone}
-                    </td>
-                    <td className="border-b px-3 py-2" style={cellStyle}>
-                      {b.ticketType}
-                    </td>
-                    <td className="border-b px-3 py-2" style={cellStyle}>
-                      {b.quantity}
-                    </td>
-                    <td className="border-b px-3 py-2" style={cellStyle}>
-                      ₹{b.amount.toLocaleString('en-IN')}
-                    </td>
-                    <td className="border-b px-3 py-2" style={cellStyle}>
-                      {b.eventDates.join(', ')}
-                    </td>
-                    <td className="border-b px-3 py-2" style={mutedCellStyle}>
-                      <span
-                        className="rounded-full px-2 py-0.5 text-xs font-medium"
-                        style={paymentBadgeStyle[b.paymentStatus]}
-                      >
-                        {b.paymentStatus}
-                      </span>
-                    </td>
-                    <td className="border-b px-3 py-2" style={mutedCellStyle}>
-                      {b.bookingCode}
-                    </td>
-                    <td className="border-b px-3 py-2" style={mutedCellStyle}>
-                      {formatDateTime(b.createdAt)}
-                    </td>
-                  </tr>
-                ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={10} className="px-3 py-6 text-center" style={mutedCellStyle}>
-                      No bookings match your filters.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </>
+
+          <div
+            className="w-full shrink-0 rounded-xl border p-4 lg:w-72"
+            style={{ borderColor: 'var(--rd-line)', background: 'var(--rd-panel)' }}
+          >
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--rd-muted)' }}>
+              Totals for current filter
+            </p>
+            <div className="mb-4">
+              <p className="text-xs" style={{ color: 'var(--rd-muted)' }}>
+                Total amount
+              </p>
+              <p className="rd-heading text-2xl" style={{ color: 'var(--rd-text)' }}>
+                ₹{totals.total.toLocaleString('en-IN')}
+              </p>
+              <p className="text-xs" style={{ color: 'var(--rd-muted)' }}>
+                across {totals.count} booking(s)
+              </p>
+            </div>
+            <div className="space-y-2 border-t pt-3 text-sm" style={{ borderColor: 'var(--rd-line)' }}>
+              <div className="flex items-center justify-between">
+                <span style={{ color: 'var(--rd-green)' }}>Paid</span>
+                <span style={cellStyle}>₹{totals.paid.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span style={{ color: 'var(--rd-gold-2)' }}>Pending</span>
+                <span style={cellStyle}>₹{totals.pending.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span style={{ color: 'var(--rd-red)' }}>Failed</span>
+                <span style={cellStyle}>₹{totals.failed.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
@@ -405,7 +483,7 @@ function DashboardContent() {
     <div className="rd-page">
       <StaffHeader staffName={staff.staffName} isAdmin={staff.isAdmin} onLogout={logout} />
 
-      <div className="mx-auto max-w-4xl px-4 py-10">
+      <div className="mx-auto max-w-7xl px-4 py-10">
         <h1 className="rd-heading mb-1 text-2xl" style={{ color: 'var(--rd-text)' }}>
           Admin dashboard
         </h1>

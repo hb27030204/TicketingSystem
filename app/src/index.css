@@ -3,7 +3,7 @@
 :root {
   color-scheme: light dark;
 
-  /* Raas Garba X Dandiya 2.0 brand tokens, ported from the old design. Used directly
+  /* Raas Garba brand tokens, ported from the old design. Used directly
      by the customer-facing pages (Home, TicketCard, Hero, Footer, Login)
      via CSS custom properties rather than Tailwind's dark: variants,
      since this is a fixed dark theme, not a light/dark toggle. Staff and

@@ -21,7 +21,7 @@ export function Hero() {
         </span>
 
         <p className="mb-2 text-xs font-semibold uppercase tracking-[3px]" style={{ color: 'var(--rd-gold)' }}>
-          Raas Garba X Dandiya 2.0 · By AK
+          Raas Garba · By AK
         </p>
 
         <h1

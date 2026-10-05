@@ -19,7 +19,7 @@ export function StaffHeader({
   return (
     <div className="flex items-center justify-between border-b px-4 py-4 sm:px-8" style={{ borderColor: 'var(--rd-line)' }}>
       <span className="text-xs font-extrabold uppercase tracking-[2.4px]" style={{ color: 'var(--rd-text)' }}>
-        RAAS GARBA <span style={{ color: 'var(--rd-gold-2)' }}>X DANDIYA 2.0</span>
+        RAAS <span style={{ color: 'var(--rd-gold-2)' }}>GARBA</span>
       </span>
       {staffName && (
         <div className="flex items-center gap-4">

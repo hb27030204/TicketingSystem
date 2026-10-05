@@ -33,7 +33,7 @@ import '../styles/landing.css'
 // Order here is the display order everywhere (brand strip + sponsors wall).
 const BRANDS = [
   { name: 'Eco Design Infra Solutions', logo: ecoDesignLogo, bg: '#ffffff' },
-  { name: 'D Production', logo: dProductionLogo, bg: '#000000' },
+  // { name: 'D Production', logo: dProductionLogo, bg: '#000000' },
   { name: 'Sri Nandi Garden & Clubhouse', logo: nandiLogo, bg: '#f1f2ed' },
   { name: 'clickitUp', logo: clickitUpLogo, bg: '#ffffff' },
   { name: 'WOW - Wardrobe Of Women', logo: wowLogo, bg: '#f2eee5' },
@@ -140,7 +140,7 @@ function Slideshow({ slides, alt }: { slides: { img: string; pos?: string }[]; a
 }
 
 function PulseRibbon({ reverse = false }: { reverse?: boolean }) {
-  const items = ['✦ RAAS GARBA X DANDIYA 2.0', 'VIJAYAPURA LET’S DANDIYA', '✦ 16 OCT DANDIYA NIGHT', '17 OCT BOLLYWOOD DJ NIGHT', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
+  const items = ['✦ RAAS GARBA', 'VIJAYAPURA LET’S DANDIYA', '✦ 16 OCT DANDIYA NIGHT', '17 OCT BOLLYWOOD DJ NIGHT', '✦ DRESS UP', 'SHOW UP', '✦ DANCE ALL NIGHT', 'MAKE SOME NOISE']
   const doubled = [...items, ...items]
   return (
     <section className={`ld-pulse${reverse ? ' ld-pulse-reverse' : ''}`} aria-hidden="true">
@@ -212,7 +212,7 @@ export function Landing() {
             <div className="ld-hero-collab">
               <p className="ld-hero-collab-label">In collaboration with</p>
               <p className="ld-hero-collab-brand">
-                RAAS GARBA <b>X</b> DANDIYA 2.0
+                RAAS GARBA
               </p>
             </div>
             {/* Glass credits strip: organisers first, then management */}
@@ -220,11 +220,11 @@ export function Landing() {
               <div className="ld-hero-credits">
                 <div>
                   <small>Organised by</small>
-                  <span>Akshata Nayak, Chinmayi &amp; Ketan Dhumale</span>
+                  <span>Akshata Nayak</span>
                 </div>
                 <div>
                   <small>Managed by</small>
-                  <span>D Productions</span>
+                  <span>Sam & Sam</span>
                 </div>
               </div>
             </div>
@@ -237,7 +237,7 @@ export function Landing() {
             <div className="ld-hero-marquee-track">
               {Array.from({ length: 2 }).map((_, i) => (
                 <span key={i}>
-                  <span>RAAS GARBA X DANDIYA 2.0</span>
+                  <span>RAAS GARBA</span>
                   <span>16 OCT · DANDIYA NIGHT</span>
                   <span>17 OCT · BOLLYWOOD DJ NIGHT</span>
                   <span>{VENUE_NAME.toUpperCase()}</span>
@@ -263,7 +263,7 @@ export function Landing() {
         </div>
       </section>
 
-      <section className="ld-section ld-venue ld-celebrity" id="celebrity">
+      {/* <section className="ld-section ld-venue ld-celebrity" id="celebrity">
         <div className="ld-venue-grid">
           <div>
             <span className="ld-kicker">SOMETHING BIG IS COMING</span>
@@ -276,7 +276,7 @@ export function Landing() {
               <em>Moments.</em>
             </h2>
             <p className="ld-venue-lead">
-              RAAS GARBA X DANDIYA 2.0 is bringing a surprise guest to the stage this year. Who it is stays under
+              RAAS GARBA is bringing a surprise guest to the stage this year. Who it is stays under
               wraps for now — the big reveal is coming soon.
             </p>
             <div className="ld-venue-facts">
@@ -297,7 +297,7 @@ export function Landing() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="ld-section ld-vibe" id="experience">
         <div className="ld-kicker">THE PEOPLE · THE ENERGY · THE NIGHT</div>
@@ -307,7 +307,7 @@ export function Landing() {
             <br />
             <span>Stay for the madness.</span>
           </h2>
-          <p>RAAS GARBA X DANDIYA 2.0 is built to feel less like an event you attend and more like a night you remember.</p>
+          <p>RAAS GARBA is built to feel less like an event you attend and more like a night you remember.</p>
         </div>
         <div className="ld-gallery">
           {GALLERY.map((g, i) => (
@@ -365,7 +365,7 @@ export function Landing() {
               <em>Vijayapura.</em>
             </h2>
             <p className="ld-venue-lead">
-              RAAS GARBA X DANDIYA 2.0 is bringing two nights of music and celebration to <strong>Vijayapura.</strong>
+              RAAS GARBA is bringing two nights of music and celebration to <strong>Vijayapura.</strong>
             </p>
             <div className="ld-venue-location-card">
               <div className="ld-venue-pin">⌖</div>
@@ -428,7 +428,7 @@ export function Landing() {
             </h2>
           </div>
           <p>
-            The local names and creators helping bring <strong>RAAS GARBA X DANDIYA 2.0</strong> to life in
+            The local names and creators helping bring <strong>RAAS GARBA</strong> to life in
             Vijayapura.
           </p>
         </div>

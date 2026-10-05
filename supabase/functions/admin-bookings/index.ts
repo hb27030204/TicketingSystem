@@ -46,12 +46,19 @@ Deno.serve(async (req) => {
 
     if (error) throw error
 
+    // The offline/walk-in batch (see Offline Tickets generation) all
+    // shares one placeholder profile, phone 9999999999 - that's the only
+    // signal distinguishing an offline-issued ticket from a real online
+    // booking, since otherwise they're identical rows in this table.
+    const OFFLINE_PLACEHOLDER_PHONE = '9999999999'
+
     const bookings = ((data ?? []) as unknown as OrderRow[]).map((row) => ({
       orderId: row.id,
       bookingCode: row.booking_code,
       name: row.profiles?.full_name ?? '',
       email: row.profiles?.email ?? '',
       phone: row.profiles?.phone ?? '',
+      isOffline: row.profiles?.phone === OFFLINE_PLACEHOLDER_PHONE,
       ticketType: row.ticket_types?.label ?? '',
       quantity: row.quantity,
       amount: row.amount,

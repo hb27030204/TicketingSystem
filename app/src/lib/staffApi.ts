@@ -92,6 +92,7 @@ export interface Booking {
   name: string
   email: string
   phone: string
+  isOffline: boolean
   ticketType: string
   quantity: number
   amount: number

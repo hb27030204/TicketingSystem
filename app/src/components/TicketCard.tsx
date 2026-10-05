@@ -65,7 +65,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
         <div className="ticket-pattern" />
 
         <div className="ticket-top">
-          <div className="ticket-logo">RAAS GARBA X DANDIYA 2.0 · BY AK</div>
+          <div className="ticket-logo">RAAS GARBA · BY AK</div>
           <div className="ticket-ornament">✦ ✧ ✦</div>
           <h3 className="ticket-title">RAAS</h3>
           <div className="ticket-script">{scriptText}</div>
@@ -145,7 +145,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
         <div className="ticket-pattern" />
 
         <div className="back-inner">
-          <div className="back-logo">RAAS GARBA X DANDIYA 2.0 · BY AK</div>
+          <div className="back-logo">RAAS GARBA · BY AK</div>
           <div className="back-script">
             {theme === 'kids' ? (
               <>
@@ -203,7 +203,7 @@ export function TicketCard({ order, ticketType, qrImageUrl }: MyTicket) {
           <div className="back-line">▸ No re-entry once you exit.</div>
 
           <div className="back-footer">
-            RAAS GARBA X DANDIYA 2.0
+            RAAS GARBA
             <br />
             Present this ticket at the entrance
           </div>

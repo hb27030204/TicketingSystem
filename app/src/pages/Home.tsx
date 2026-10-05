@@ -155,7 +155,7 @@ export function Home() {
         key: RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: 'INR',
-        name: 'Raas Garba X Dandiya 2.0',
+        name: 'Raas Garba',
         description: selectedType.label,
         order_id: order.razorpayOrderId,
         prefill: { contact: profilePhone },

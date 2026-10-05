@@ -1,4 +1,4 @@
-/* Raas Garba X Dandiya 2.0 public landing page.
+/* Raas Garba public landing page.
    Visual language follows the original Apps Script page (Old Code/Index.html):
    near-black ground, dotted texture, gold accents, Playfair headings with a
    gold second line, glassy pill chips. Scoped under .ld- so it can't leak
@@ -324,7 +324,7 @@
   text-shadow: 0 10px 45px rgba(0, 0, 0, 0.62);
 }
 
-/* "In collaboration with / RAAS GARBA X DANDIYA 2.0" under the title */
+/* "In collaboration with / RAAS GARBA" under the title */
 .ld-hero-collab {
   display: flex;
   flex-direction: column;
@@ -381,8 +381,6 @@
   padding: 2px var(--ld-s-4);
 }
 .ld-hero-credits > div + div { border-left: 1px solid rgba(246, 220, 149, 0.2); }
-/* Organisers list is the longer of the two, so it gets more width */
-.ld-hero-credits > div:first-child { flex-grow: 1.7; }
 .ld-hero-credits span { font-size: 15px; font-weight: 600; line-height: 1.35; color: #fff4e5; }
 
 .ld-hero-cta {

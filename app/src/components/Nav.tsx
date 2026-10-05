@@ -17,7 +17,7 @@ export function Nav({ hideBookCta = false }: NavProps) {
   return (
     <nav className={`rd-nav${onBookingPage ? '' : ' rd-nav-sticky'}`}>
       <Link to="/" className="rd-nav-brand">
-        RAAS GARBA <span>X DANDIYA 2.0</span>
+        RAAS <span>GARBA</span>
       </Link>
       <div className="rd-nav-actions">
         {!onBookingPage && !hideBookCta && (
