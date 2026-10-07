@@ -218,7 +218,7 @@ export function Landing() {
               <div className="ld-hero-credits">
                 <div>
                   <small>Organised by</small>
-                  <span>Akshata Nayak & Chinmayi Patil</span>
+                  <span>Akshata Nayak</span>
                 </div>
                 <div>
                   <small>Managed by</small>
