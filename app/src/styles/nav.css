@@ -34,11 +34,22 @@
 .rd-nav-brand span { color: var(--rd-gold-2); }
 .rd-nav-actions { display: flex; align-items: center; gap: 10px; }
 
-@media (max-width: 560px) {
-  .rd-nav-brand {
-    font-size: 10px;
-    letter-spacing: 1.4px;
-  }
+.rd-nav-call {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--rd-line);
+  color: var(--rd-muted);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.rd-nav-call svg { display: block; }
+.rd-nav-call:hover {
+  border-color: var(--rd-gold);
+  color: var(--rd-gold-2);
 }
 .rd-nav-book {
   border-radius: 999px;
@@ -50,4 +61,16 @@
   background: linear-gradient(120deg, var(--rd-gold), var(--rd-gold-2));
   color: #171216;
   white-space: nowrap;
+}
+
+/* Must come after the base .rd-nav-call/.rd-nav-book rules above -
+   same specificity, so source order decides and this needs to win. */
+@media (max-width: 560px) {
+  .rd-nav-brand {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+  }
+  .rd-nav-actions { gap: 6px; }
+  .rd-nav-call { width: 32px; height: 32px; }
+  .rd-nav-book { padding: 9px 13px; font-size: 10px; letter-spacing: 0.6px; }
 }

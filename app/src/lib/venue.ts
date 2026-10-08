@@ -5,3 +5,8 @@ export const VENUE_NAME = 'Shri Nandi Garden and Clubhouse'
 // installed, otherwise Maps in Safari. assets/venue-location-qr.png
 // encodes this same URL - regenerate it if this ever changes.
 export const VENUE_MAPS_URL = 'https://maps.google.com/?cid=11062990341312853521'
+
+// First of the three numbers shown in Landing's "For Enquiries" footer
+// section - used as the single tap-to-call target in the nav, where
+// there's only room for one number.
+export const PRIMARY_CONTACT_NUMBER = '7411063926'

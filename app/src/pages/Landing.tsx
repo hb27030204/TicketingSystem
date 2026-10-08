@@ -17,6 +17,8 @@ import heroImage from '../assets/landing-hero.jpg'
 import venueQr from '../assets/venue-location-qr.png'
 import { Footer } from '../components/Footer'
 import { Nav } from '../components/Nav'
+import { PhoneIcon } from '../components/PhoneIcon'
+import { WhatsAppIcon } from '../components/WhatsAppIcon'
 import { VENUE_MAPS_URL, VENUE_NAME } from '../lib/venue'
 import '../styles/landing.css'
 
@@ -151,6 +153,58 @@ function PulseRibbon({ reverse = false }: { reverse?: boolean }) {
   )
 }
 
+const CONTACT_NUMBERS = ['7411063926', '8217053141', '6360109359']
+
+// Two of these appear on the page: a phone-call version right after the
+// brand banner (reachable before scrolling far), and a WhatsApp version
+// at the bottom - same numbers, different action depending on how the
+// guest prefers to get in touch.
+function ContactSection({ mode }: { mode: 'call' | 'whatsapp' }) {
+  return (
+    <section className="ld-section ld-contact">
+      <div className="ld-contact-head">
+        {mode === 'call' ? (
+          <>
+            <span className="ld-kicker">Get in Touch</span>
+            <h2>We&rsquo;re Here to Help</h2>
+            <p>Reach out for passes, venue details, group bookings, or any event support.</p>
+            <p className="ld-contact-note">
+              Our team replies quickly — reach us directly below for the fastest answer.
+            </p>
+          </>
+        ) : (
+          <>
+            <span className="ld-kicker">Prefer WhatsApp?</span>
+            <h2>Message Us Directly</h2>
+            <p>Drop us a message anytime — we usually reply within minutes.</p>
+          </>
+        )}
+      </div>
+      <div className="ld-contact-numbers">
+        {CONTACT_NUMBERS.map((number) =>
+          mode === 'call' ? (
+            <a key={number} className="ld-contact-pill" href={`tel:+91${number}`}>
+              <PhoneIcon />
+              {number}
+            </a>
+          ) : (
+            <a
+              key={number}
+              className="ld-contact-pill"
+              href={`https://wa.me/91${number}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <WhatsAppIcon />
+              {number}
+            </a>
+          ),
+        )}
+      </div>
+    </section>
+  )
+}
+
 function BrandMarqueeSet({ hidden = false }: { hidden?: boolean }) {
   return (
     <div className="ld-brand-set" aria-hidden={hidden || undefined}>
@@ -260,6 +314,8 @@ export function Landing() {
           </div>
         </div>
       </section>
+
+      <ContactSection mode="call" />
 
       {/* <section className="ld-section ld-venue ld-celebrity" id="celebrity">
         <div className="ld-venue-grid">
@@ -447,6 +503,8 @@ export function Landing() {
           <i>✦</i>
         </div>
       </section>
+
+      <ContactSection mode="whatsapp" />
 
       <Footer />
     </div>
