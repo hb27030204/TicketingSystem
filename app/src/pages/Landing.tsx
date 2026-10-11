@@ -8,7 +8,9 @@ import dancersSkirtsImage from '../assets/gallery/dancers-skirts.jpg'
 import dandiyaEnergyImage from '../assets/DandiyaEnergy.jpg'
 import dandiyaSticksImage from '../assets/gallery/dandiya-sticks.webp'
 import nandiLogo from '../assets/brands/nandi.jpg'
+import cafeChaiBhuttaLogo from '../assets/brands/cafechaibhutta.png'
 import clickitUpLogo from '../assets/brands/clickitup.jpeg'
+import diamondLogo from '../assets/brands/diamond.jpg'
 import ecoDesignLogo from '../assets/brands/ecodesign.jpeg'
 import samLogo from '../assets/brands/sam.jpeg'
 import sbgLogo from '../assets/brands/sbg.jpeg'
@@ -39,6 +41,8 @@ const BRANDS = [
   { name: 'WOW - Wardrobe Of Women', logo: wowLogo, bg: '#f2eee5' },
   { name: 'Sam Mehendi Art', logo: samLogo, bg: '#000000' },
   { name: 'SBG Teddy Events', logo: sbgLogo, bg: '#010005' },
+  { name: 'Cafe Chai Bhutta', logo: cafeChaiBhuttaLogo, bg: '#ffffff' },
+  { name: 'Diamond Group of Institutions', logo: diamondLogo, bg: '#ffffff' },
 ]
 
 // Background-style YouTube embeds: muted + looped (loop needs
