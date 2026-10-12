@@ -12,6 +12,7 @@ import cafeChaiBhuttaLogo from '../assets/brands/cafechaibhutta.png'
 import clickitUpLogo from '../assets/brands/clickitup.jpeg'
 import diamondLogo from '../assets/brands/diamond.jpg'
 import ecoDesignLogo from '../assets/brands/ecodesign.jpeg'
+import mkConstructionsLogo from '../assets/brands/mkconstructions.jpg'
 import samLogo from '../assets/brands/sam.jpeg'
 import sbgLogo from '../assets/brands/sbg.jpeg'
 import wowLogo from '../assets/brands/wow.jpeg'
@@ -43,6 +44,7 @@ const BRANDS = [
   { name: 'SBG Teddy Events', logo: sbgLogo, bg: '#010005' },
   { name: 'Cafe Chai Bhutta', logo: cafeChaiBhuttaLogo, bg: '#ffffff' },
   { name: 'Diamond Group of Institutions', logo: diamondLogo, bg: '#ffffff' },
+  { name: 'MK Constructions', logo: mkConstructionsLogo, bg: '#000000' },
 ]
 
 // Background-style YouTube embeds: muted + looped (loop needs
