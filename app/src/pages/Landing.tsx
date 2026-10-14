@@ -8,6 +8,7 @@ import dancersSkirtsImage from '../assets/gallery/dancers-skirts.jpg'
 import dandiyaEnergyImage from '../assets/DandiyaEnergy.jpg'
 import dandiyaSticksImage from '../assets/gallery/dandiya-sticks.webp'
 import nandiLogo from '../assets/brands/nandi.jpg'
+import attarSoundLogo from '../assets/brands/attarsound.jpg'
 import cafeChaiBhuttaLogo from '../assets/brands/cafechaibhutta.png'
 import clickitUpLogo from '../assets/brands/clickitup.jpeg'
 import diamondLogo from '../assets/brands/diamond.jpg'
@@ -15,6 +16,7 @@ import ecoDesignLogo from '../assets/brands/ecodesign.jpeg'
 import mkConstructionsLogo from '../assets/brands/mkconstructions.jpg'
 import samLogo from '../assets/brands/sam.jpeg'
 import sbgLogo from '../assets/brands/sbg.jpeg'
+import skLightLogo from '../assets/brands/sklight.jpg'
 import wowLogo from '../assets/brands/wow.jpeg'
 import heroImage from '../assets/landing-hero.jpg'
 import venueQr from '../assets/venue-location-qr.png'
@@ -45,6 +47,8 @@ const BRANDS = [
   { name: 'Cafe Chai Bhutta', logo: cafeChaiBhuttaLogo, bg: '#ffffff' },
   { name: 'Diamond Group of Institutions', logo: diamondLogo, bg: '#ffffff' },
   { name: 'MK Constructions', logo: mkConstructionsLogo, bg: '#000000' },
+  { name: 'Attar Sound', logo: attarSoundLogo, bg: '#000000' },
+  { name: 'SK Light', logo: skLightLogo, bg: '#000000' },
 ]
 
 // Background-style YouTube embeds: muted + looped (loop needs
