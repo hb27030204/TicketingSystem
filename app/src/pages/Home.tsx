@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import venueQr from '../assets/venue-location-qr.png'
+import { BookingConfirmOverlay, type ConfirmState } from '../components/BookingConfirmOverlay'
 import { Footer } from '../components/Footer'
 import { Hero } from '../components/Hero'
 import { Nav } from '../components/Nav'
@@ -62,6 +63,7 @@ export function Home() {
   const [profilePhone, setProfilePhone] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [confirmState, setConfirmState] = useState<ConfirmState | null>(null)
 
   useEffect(() => {
     supabase
@@ -162,6 +164,10 @@ export function Home() {
         notes: { booking_code: order.bookingCode },
         theme: { color: '#d7ad52' },
         handler: async (response: RazorpayHandlerResponse) => {
+          // Razorpay's own modal closes the instant payment succeeds, so
+          // without this a guest can easily think they're done and close
+          // the tab while verifyPayment below is still issuing the ticket.
+          setConfirmState('confirming')
           try {
             await verifyPayment({
               bookingCode: order.bookingCode,
@@ -169,8 +175,10 @@ export function Home() {
               razorpayOrderId: response.razorpay_order_id,
               razorpaySignature: response.razorpay_signature,
             })
-            navigate('/my-tickets?success=1')
+            setConfirmState('success')
+            setTimeout(() => navigate('/my-tickets?success=1'), 1100)
           } catch (err) {
+            setConfirmState(null)
             setError(
               err instanceof Error
                 ? err.message
@@ -198,6 +206,8 @@ export function Home() {
 
   return (
     <div className="rd-page">
+      {confirmState && <BookingConfirmOverlay state={confirmState} />}
+
       <Nav />
 
       <Hero />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
+import { BookingConfirmOverlay, type ConfirmState } from '../components/BookingConfirmOverlay'
 import { verifyPayment } from '../lib/booking'
 
 // Landing point for the Razorpay *redirect* checkout flow used on restricted
@@ -11,6 +12,7 @@ export function CheckoutSuccess() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [error, setError] = useState('')
+  const [confirmState, setConfirmState] = useState<ConfirmState>('confirming')
 
   useEffect(() => {
     const bookingCode = searchParams.get('bookingCode') || ''
@@ -29,7 +31,10 @@ export function CheckoutSuccess() {
       razorpayOrderId: orderId,
       razorpaySignature: signature,
     })
-      .then(() => navigate('/my-tickets', { replace: true }))
+      .then(() => {
+        setConfirmState('success')
+        setTimeout(() => navigate('/my-tickets', { replace: true }), 1100)
+      })
       .catch((err) =>
         setError(
           err instanceof Error
@@ -39,21 +44,26 @@ export function CheckoutSuccess() {
       )
   }, [searchParams, navigate])
 
+  if (error) {
+    return (
+      <div className="rd-page mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center px-6 text-center">
+        <p className="mb-4 text-sm" style={{ color: 'var(--rd-red)' }}>
+          {error}
+        </p>
+        <button
+          onClick={() => navigate('/my-tickets')}
+          className="rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wide"
+          style={{ background: 'linear-gradient(120deg, var(--rd-gold), var(--rd-gold-2))', color: '#171216' }}
+        >
+          Go to My Tickets
+        </button>
+      </div>
+    )
+  }
+
   return (
-    <div className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center px-6 text-center">
-      {error ? (
-        <>
-          <p className="mb-4 text-red-600">{error}</p>
-          <button
-            onClick={() => navigate('/my-tickets')}
-            className="rounded-lg bg-neutral-900 px-4 py-2 font-medium text-white dark:bg-white dark:text-neutral-900"
-          >
-            Go to My Tickets
-          </button>
-        </>
-      ) : (
-        <p className="text-neutral-500">Confirming your payment…</p>
-      )}
+    <div className="rd-page min-h-screen">
+      <BookingConfirmOverlay state={confirmState} />
     </div>
   )
 }
