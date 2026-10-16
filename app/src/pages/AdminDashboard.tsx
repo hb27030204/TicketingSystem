@@ -7,19 +7,23 @@ import { useStaffSession } from '../hooks/useStaffSession'
 import {
   fetchBookings,
   fetchCheckinLog,
+  fetchFailedToLink,
   fetchStaffList,
+  linkPayment,
   type Booking,
   type CheckinLogEvent,
+  type FailedToLinkOrder,
   type StaffMember,
 } from '../lib/staffApi'
 
-type Tab = 'checkin' | 'bookings' | 'staff' | 'log'
+type Tab = 'checkin' | 'bookings' | 'staff' | 'log' | 'failed-to-link'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'checkin', label: 'Check-in dates' },
   { id: 'bookings', label: 'Bookings' },
   { id: 'staff', label: 'Staff' },
   { id: 'log', label: 'Check-in log' },
+  { id: 'failed-to-link', label: 'Failed to link' },
 ]
 
 function formatDateTime(iso: string): string {
@@ -297,6 +301,153 @@ function BookingsTab({ sessionToken }: { sessionToken: string }) {
   )
 }
 
+function FailedToLinkTab({ sessionToken }: { sessionToken: string }) {
+  const [result, setResult] = useState<{ checkedCount: number; lookupErrors: number; mismatches: FailedToLinkOrder[] } | null>(null)
+  const [checking, setChecking] = useState(false)
+  const [error, setError] = useState('')
+  const [linkingCode, setLinkingCode] = useState<string | null>(null)
+  const [fixedCodes, setFixedCodes] = useState<Set<string>>(new Set())
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({})
+
+  const runCheck = () => {
+    setChecking(true)
+    setError('')
+    fetchFailedToLink(sessionToken)
+      .then((r) => {
+        setResult(r)
+        setFixedCodes(new Set())
+        setRowErrors({})
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : 'Could not check for unlinked payments.'))
+      .finally(() => setChecking(false))
+  }
+
+  const handleLink = (bookingCode: string) => {
+    setLinkingCode(bookingCode)
+    setRowErrors((prev) => ({ ...prev, [bookingCode]: '' }))
+    linkPayment(sessionToken, bookingCode)
+      .then(() => setFixedCodes((prev) => new Set(prev).add(bookingCode)))
+      .catch((err) =>
+        setRowErrors((prev) => ({
+          ...prev,
+          [bookingCode]: err instanceof Error ? err.message : 'Could not link this payment.',
+        })),
+      )
+      .finally(() => setLinkingCode(null))
+  }
+
+  return (
+    <div>
+      <p className="mb-4 max-w-2xl text-sm" style={{ color: 'var(--rd-muted)' }}>
+        Finds orders stuck as PENDING in our database where Razorpay actually shows the payment as
+        captured - usually from a browser closing or losing connection right after paying, before
+        the confirmation reached us. This calls Razorpay's API for every PENDING order, so it runs
+        on demand rather than automatically.
+      </p>
+
+      <button
+        type="button"
+        onClick={runCheck}
+        disabled={checking}
+        className="mb-4 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide disabled:opacity-50"
+        style={{ borderColor: 'var(--rd-gold)', background: 'rgba(215,173,82,0.1)', color: 'var(--rd-gold-2)' }}
+      >
+        {checking ? 'Checking against Razorpay…' : 'Check for unlinked payments'}
+      </button>
+
+      {error && (
+        <p className="mb-4 text-sm" style={{ color: 'var(--rd-red)' }}>
+          {error}
+        </p>
+      )}
+
+      {result && (
+        <>
+          <p className="mb-2 text-xs" style={{ color: 'var(--rd-muted)' }}>
+            Checked {result.checkedCount} pending order(s) against Razorpay — found {result.mismatches.length}
+            {' '}unlinked payment(s).
+            {result.lookupErrors > 0 && ` (${result.lookupErrors} lookup${result.lookupErrors === 1 ? '' : 's'} failed - try again.)`}
+          </p>
+
+          {result.mismatches.length > 0 && (
+            <div className="overflow-x-auto rounded-xl border" style={{ borderColor: 'var(--rd-line)' }}>
+              <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+                <thead>
+                  <tr style={{ background: 'var(--rd-panel)' }}>
+                    {['Booking code', 'Name', 'Phone', 'Email', 'Ticket type', 'Amount', 'Paid at', 'Method', ''].map((h) => (
+                      <th key={h} className="border-b px-3 py-2 font-semibold whitespace-nowrap" style={mutedCellStyle}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.mismatches.map((m) => {
+                    const fixed = fixedCodes.has(m.bookingCode)
+                    const rowError = rowErrors[m.bookingCode]
+                    return (
+                      <tr key={m.orderId}>
+                        <td className="border-b px-3 py-2" style={mutedCellStyle}>
+                          {m.bookingCode}
+                        </td>
+                        <td className="border-b px-3 py-2" style={cellStyle}>
+                          {m.name}
+                        </td>
+                        <td className="border-b px-3 py-2" style={cellStyle}>
+                          {m.phone}
+                        </td>
+                        <td className="border-b px-3 py-2" style={cellStyle}>
+                          {m.email}
+                        </td>
+                        <td className="border-b px-3 py-2" style={cellStyle}>
+                          {m.ticketType}
+                        </td>
+                        <td className="border-b px-3 py-2" style={cellStyle}>
+                          ₹{(m.amountPaidOnRazorpay / 100).toLocaleString('en-IN')}
+                        </td>
+                        <td className="border-b px-3 py-2 whitespace-nowrap" style={mutedCellStyle}>
+                          {formatDateTime(m.createdAt)}
+                        </td>
+                        <td className="border-b px-3 py-2 uppercase" style={mutedCellStyle}>
+                          {m.paymentMethod ?? '—'}
+                        </td>
+                        <td className="border-b px-3 py-2 whitespace-nowrap">
+                          {fixed ? (
+                            <span className="text-xs font-semibold" style={{ color: 'var(--rd-green)' }}>
+                              ✓ Linked
+                            </span>
+                          ) : (
+                            <div>
+                              <button
+                                type="button"
+                                onClick={() => handleLink(m.bookingCode)}
+                                disabled={linkingCode === m.bookingCode}
+                                className="rounded-full px-3 py-1.5 text-xs font-semibold uppercase disabled:opacity-50"
+                                style={{ background: 'rgba(85,212,138,0.15)', color: 'var(--rd-green)' }}
+                              >
+                                {linkingCode === m.bookingCode ? 'Linking…' : 'Link & send email'}
+                              </button>
+                              {rowError && (
+                                <p className="mt-1 max-w-[220px] text-xs" style={{ color: 'var(--rd-red)' }}>
+                                  {rowError}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
 function StaffTab({ sessionToken }: { sessionToken: string }) {
   const [staffList, setStaffList] = useState<StaffMember[] | null>(null)
   const [error, setError] = useState('')
@@ -501,6 +652,7 @@ function DashboardContent() {
         {tab === 'bookings' && <BookingsTab sessionToken={staff.sessionToken} />}
         {tab === 'staff' && <StaffTab sessionToken={staff.sessionToken} />}
         {tab === 'log' && <CheckinLogTab sessionToken={staff.sessionToken} />}
+        {tab === 'failed-to-link' && <FailedToLinkTab sessionToken={staff.sessionToken} />}
       </div>
     </div>
   )

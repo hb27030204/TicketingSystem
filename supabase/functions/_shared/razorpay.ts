@@ -44,6 +44,69 @@ export async function createRazorpayOrder(input: {
   return { ...order, keyId }
 }
 
+export interface RazorpayOrderStatus {
+  status: string
+  amountPaid: number
+  amountDue: number
+}
+
+export async function fetchRazorpayOrderStatus(razorpayOrderId: string): Promise<RazorpayOrderStatus> {
+  const { keyId, keySecret } = keys()
+
+  const response = await fetch(`https://api.razorpay.com/v1/orders/${razorpayOrderId}`, {
+    headers: { Authorization: 'Basic ' + btoa(`${keyId}:${keySecret}`) },
+  })
+
+  if (!response.ok) {
+    throw new Error(`Could not fetch Razorpay order ${razorpayOrderId}.`)
+  }
+
+  const order = await response.json()
+  return { status: order.status, amountPaid: order.amount_paid, amountDue: order.amount_due }
+}
+
+export interface RazorpayPayment {
+  id: string
+  status: string
+  method: string
+  amount: number
+  createdAt: number
+}
+
+// First captured payment for an order - good enough here since our flow
+// never creates more than one successful payment per order (the UI
+// doesn't allow retrying after a captured payment shows success).
+export async function fetchFirstCapturedPayment(razorpayOrderId: string): Promise<RazorpayPayment | null> {
+  const { keyId, keySecret } = keys()
+
+  const response = await fetch(`https://api.razorpay.com/v1/orders/${razorpayOrderId}/payments`, {
+    headers: { Authorization: 'Basic ' + btoa(`${keyId}:${keySecret}`) },
+  })
+
+  if (!response.ok) {
+    throw new Error(`Could not fetch payments for Razorpay order ${razorpayOrderId}.`)
+  }
+
+  const data = await response.json()
+  const items = (data.items ?? []) as Array<{
+    id: string
+    status: string
+    method: string
+    amount: number
+    created_at: number
+  }>
+  const captured = items.find((p) => p.status === 'captured')
+  if (!captured) return null
+
+  return {
+    id: captured.id,
+    status: captured.status,
+    method: captured.method,
+    amount: captured.amount,
+    createdAt: captured.created_at,
+  }
+}
+
 export async function verifyRazorpaySignature(
   razorpayOrderId: string,
   razorpayPaymentId: string,

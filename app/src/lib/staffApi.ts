@@ -150,3 +150,44 @@ export async function fetchCheckinLog(sessionToken: string): Promise<CheckinLogE
   if (!data.success) throw new Error(data.message || 'Could not load the check-in log.')
   return data.events
 }
+
+export interface FailedToLinkOrder {
+  orderId: string
+  bookingCode: string
+  name: string
+  phone: string
+  email: string
+  ticketType: string
+  amount: number
+  amountPaidOnRazorpay: number
+  razorpayOrderId: string
+  razorpayPaymentId: string | null
+  paymentMethod: string | null
+  createdAt: string
+}
+
+export interface FailedToLinkResult {
+  checkedCount: number
+  lookupErrors: number
+  mismatches: FailedToLinkOrder[]
+}
+
+export async function fetchFailedToLink(sessionToken: string): Promise<FailedToLinkResult> {
+  const data = await invokeFunction<
+    { success: boolean; checkedCount: number; lookupErrors: number; mismatches: FailedToLinkOrder[]; message?: string }
+  >('admin-failed-payments', { session_token: sessionToken })
+  if (!data.success) throw new Error(data.message || 'Could not check for unlinked payments.')
+  return { checkedCount: data.checkedCount, lookupErrors: data.lookupErrors, mismatches: data.mismatches }
+}
+
+export async function linkPayment(
+  sessionToken: string,
+  bookingCode: string,
+): Promise<{ alreadyLinked: boolean }> {
+  const data = await invokeFunction<{ success: boolean; alreadyLinked: boolean; message?: string }>(
+    'admin-link-payment',
+    { session_token: sessionToken, booking_code: bookingCode },
+  )
+  if (!data.success) throw new Error(data.message || 'Could not link this payment.')
+  return { alreadyLinked: data.alreadyLinked }
+}
