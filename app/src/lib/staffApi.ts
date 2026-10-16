@@ -101,6 +101,8 @@ export interface Booking {
   ticketStatus: string | null
   emailStatus: string | null
   createdAt: string
+  totalGuests: number
+  checkedInCount: number
 }
 
 export async function fetchBookings(sessionToken: string): Promise<Booking[]> {
@@ -140,6 +142,9 @@ export interface CheckinLogEvent {
   guestPhone: string
   bookingCode: string
   ticketType: string
+  orderId: string
+  amount: number
+  isOffline: boolean
 }
 
 export async function fetchCheckinLog(sessionToken: string): Promise<CheckinLogEvent[]> {

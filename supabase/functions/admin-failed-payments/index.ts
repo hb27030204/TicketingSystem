@@ -1,5 +1,6 @@
 import { fetchFirstCapturedPayment, fetchRazorpayOrderStatus } from '../_shared/razorpay.ts'
 import { handleOptions, jsonResponse } from '../_shared/cors.ts'
+import { fetchAllRows } from '../_shared/fetchAll.ts'
 import { requireStaffSession } from '../_shared/staffAuth.ts'
 import { supabaseAdmin } from '../_shared/supabaseAdmin.ts'
 
@@ -48,20 +49,19 @@ Deno.serve(async (req) => {
       return jsonResponse({ success: false, message: 'Only an admin staff code can do this.' }, 403)
     }
 
-    const { data, error } = await admin
-      .from('orders')
-      .select(
-        'id, booking_code, amount, razorpay_order_id, created_at, ' +
-          'profiles(full_name, phone, email), ticket_types(label)',
-      )
-      .eq('payment_status', 'PENDING')
-      .is('razorpay_payment_id', null)
-      .not('razorpay_order_id', 'is', null)
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
-
-    const candidates = (data ?? []) as unknown as CandidateRow[]
+    const candidates = await fetchAllRows<CandidateRow>((from, to) =>
+      admin
+        .from('orders')
+        .select(
+          'id, booking_code, amount, razorpay_order_id, created_at, ' +
+            'profiles(full_name, phone, email), ticket_types(label)',
+        )
+        .eq('payment_status', 'PENDING')
+        .is('razorpay_payment_id', null)
+        .not('razorpay_order_id', 'is', null)
+        .order('created_at', { ascending: false })
+        .range(from, to) as unknown as PromiseLike<{ data: CandidateRow[] | null; error: { message: string } | null }>,
+    )
 
     const checked = await mapWithConcurrency(candidates, 8, async (order) => {
       try {
