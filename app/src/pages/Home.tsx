@@ -20,6 +20,13 @@ import type { EventSetting, TicketType } from '../types/db'
 
 const PENDING_KEY = 'ticketing_pending_selection'
 
+// 16 Oct has already happened. Flip this back to false to reopen both
+// the date and the 2-day ticket types once it's relevant again (e.g.
+// next year) - single source of truth for both, rather than two
+// separate toggles that could drift out of sync.
+const DAY1_BOOKINGS_CLOSED = true
+const CLOSED_DATE = '2026-10-16'
+
 function formatDate(d: string): string {
   return new Date(d + 'T00:00:00').toLocaleDateString('en-IN', {
     weekday: 'short',
@@ -82,7 +89,13 @@ export function Home() {
       .order('event_date')
       .then(({ data }) => {
         setDates(data ?? [])
-        if (data && data.length > 0) setSelectedDate(data[0].event_date)
+        // When day 1 is closed, default to the other date instead of
+        // whichever sorts first, so a guest doesn't have to notice 16th
+        // is disabled and manually switch.
+        const preferred = DAY1_BOOKINGS_CLOSED
+          ? (data?.find((d) => d.event_date !== CLOSED_DATE) ?? data?.[0])
+          : data?.[0]
+        if (preferred) setSelectedDate(preferred.event_date)
       })
   }, [])
 
@@ -241,8 +254,8 @@ export function Home() {
                     key={d.event_date}
                     type="button"
                     onClick={() => setSelectedDate(d.event_date)}
-                    disabled={isMultiDay}
-                    className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium disabled:opacity-40"
+                    disabled={isMultiDay || (DAY1_BOOKINGS_CLOSED && d.event_date === CLOSED_DATE)}
+                    className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed"
                     style={
                       selectedDate === d.event_date
                         ? {
@@ -265,30 +278,34 @@ export function Home() {
               Ticket
             </label>
             <div className="grid gap-2">
-              {ticketTypes.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setSelectedTypeId(t.id)}
-                  className="rounded-lg border px-4 py-3 text-left"
-                  style={
-                    selectedTypeId === t.id
-                      ? {
-                          borderColor: 'var(--rd-gold)',
-                          borderLeftWidth: 4,
-                          background: 'rgba(215,173,82,0.08)',
-                        }
-                      : { borderColor: 'var(--rd-line)' }
-                  }
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium" style={{ color: 'var(--rd-text)' }}>
-                      {t.label}
-                    </span>
-                    <span style={{ color: 'var(--rd-gold-2)' }}>₹{t.price.toLocaleString('en-IN')}</span>
-                  </div>
-                </button>
-              ))}
+              {ticketTypes.map((t) => {
+                const disabled = DAY1_BOOKINGS_CLOSED && t.is_multi_day
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setSelectedTypeId(t.id)}
+                    disabled={disabled}
+                    className="rounded-lg border px-4 py-3 text-left disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={
+                      selectedTypeId === t.id
+                        ? {
+                            borderColor: 'var(--rd-gold)',
+                            borderLeftWidth: 4,
+                            background: 'rgba(215,173,82,0.08)',
+                          }
+                        : { borderColor: 'var(--rd-line)' }
+                    }
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium" style={{ color: 'var(--rd-text)' }}>
+                        {t.label}
+                      </span>
+                      <span style={{ color: 'var(--rd-gold-2)' }}>₹{t.price.toLocaleString('en-IN')}</span>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
 
